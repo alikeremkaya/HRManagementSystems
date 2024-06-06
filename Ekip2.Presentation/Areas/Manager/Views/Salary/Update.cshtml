@@ -1,0 +1,132 @@
+﻿@model Ekip2.Presentation.Areas.Manager.Models.SalaryVMs.SalaryUpdateVM
+
+<div class="modal-header" style="background-color: #7978E9; color: white;">
+    <h2 class="modal-title" id="updateSalaryModalLabel">Update Salary</h2>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <form id="updateSalaryForm" asp-action="Update">
+        <input type="hidden" id="OriginalStartDate" value="@Model.SalaryDate" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="Id" />
+        <div class="form-group">
+            <label asp-for="Amount" class="control-label">@Localizer["Amount"]</label>
+            <input asp-for="Amount" class="form-control" />
+            <span asp-validation-for="Amount" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="SalaryDate" class="control-label">@Localizer["SalaryDate"]</label>
+            <input asp-for="SalaryDate" id="SalaryDate" type="date" class="form-control" />
+            <span asp-validation-for="SalaryDate" class="text-danger"></span>
+            <span id="dateError" class="text-danger" style="display:none;"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="ManagerId" class="control-label">@Localizer["Employee"]</label>
+            <select asp-for="ManagerId" asp-items="@Model.Managers" class="form-control" required>
+                <option value="">--- @Localizer["SelectEmployee"] ---</option>
+            </select>
+            <span asp-validation-for="ManagerId" class="text-danger"></span>
+        </div>
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary">@Localizer["Save"]</button>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <a asp-action="Index" class="btn btn-secondary">@Localizer["BackToList"]</a>
+</div>
+
+@section Scripts {
+   
+}
+
+<script>
+    $(document).ready(function () {
+        $('#updateSalaryModal').on('shown.bs.modal', function () {
+            $('#updateSalaryModal input').first().trigger('focus');
+        });
+
+        $('#updateSalaryForm').submit(function (e) {
+            var originalDate = new Date($('#OriginalStartDate').val());
+            var salaryDate = new Date($('#SalaryDate').val());
+            var now = new Date();
+
+            var errorMessage = '';
+
+            if (salaryDate < now) {
+                errorMessage = 'Salary date cannot be earlier than today.';
+            } else if (now > originalDate && salaryDate < originalDate) {
+                errorMessage = 'Salary date cannot be earlier than the original date if the original date is in the past.';
+            } else if (originalDate > now && salaryDate < now) {
+                errorMessage = 'Salary date cannot be earlier than today if the original date is in the future.';
+            }
+
+            if (errorMessage) {
+                e.preventDefault();
+                $('#dateError').text(errorMessage).show();
+            } else {
+                $('#dateError').hide();
+            }
+        });
+    });
+</script>
+
+<style>
+    .card {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+        border: none;
+        max-width: 1500px;
+    }
+
+    .card-header {
+        border-bottom: 2px solid #5c5ab3;
+        padding: 15px 20px;
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .card-title {
+        color: #7978E9;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .btn-primary {
+        background-color: #7978E9;
+        border-color: #7978E9;
+        color: white;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+        .btn-primary:hover {
+            background-color: #5c5ab3;
+            border-color: #5c5ab3;
+        }
+
+    .btn-secondary {
+        background-color: #ddd;
+        border-color: #ddd;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+        .btn-secondary:hover {
+            background-color: #bbb;
+            border-color: #bbb;
+        }
+
+    h2 {
+        text-align: center;
+        color: white;
+        margin: 0;
+    }
+</style>

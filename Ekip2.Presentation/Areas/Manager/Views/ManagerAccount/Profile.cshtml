@@ -1,0 +1,283 @@
+﻿@* @model Ekip2.Presentation.Areas.Manager.Models.ManagerProfileVMs.ManagerProfileVM
+@using System.Security.Claims
+
+@{
+    ViewData["Title"] = "Manager Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="page-content page-container" id="page-content">
+    <div class="padding">
+        <div class="row container d-flex justify-content-center">
+            <div class="col-xl-6 col-md-12">
+                <div class="card user-card-full">
+                    <div class="row m-l-0 m-r-0">
+                        <div class="col-sm-4 bg-c-lite-green user-profile">
+                            <div class="card-block text-center text-white">
+                                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                                {
+                                    <div class="m-b-25">
+                                        <img src="@Model.ImageUrl" class="img-radius profile-img" alt="User-Profile-Image" />
+                                    </div>
+                                }
+                                <h6 class="f-w-600">@Model.FirstName @Model.LastName</h6>
+                                <p>Manager Of @Model.CompanyName</p>
+                                <i class=" mdi mdi-square-edit-outline feather icon-edit m-t-10 f-16"></i>
+                            </div>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="card-block">
+                                <h6 class="m-b-20 p-b-5 b-b-default f-w-600">Information</h6>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <p class="m-b-10 f-w-600">Email</p>
+                                        <h6 class="text-muted f-w-400">@Model.Email</h6>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <p class="m-b-10 f-w-600">Phone</p>
+                                        <h6 class="text-muted f-w-400">@Model.PhoneNumber</h6>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <p class="m-b-10 f-w-600">Address</p>
+                                        <h6 class="text-muted f-w-400">@Model.Address</h6>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <p class="m-b-10 f-w-600">Role</p>
+                                        <h6 class="text-muted f-w-400">@User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value</h6>
+                                    </div>
+                                </div>
+                                <div class="buttons">
+                                    <input type="submit" id="changePasswordLink" data-toggle="modal" data-target="#changePasswordModal" value="@Localizer["Change Password"]" class="custom-btn btn-profile" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@if (ViewData.ModelState.ErrorCount > 0)
+{
+    <div class="alert alert-danger">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <p>@error.ErrorMessage</p>
+        }
+    </div>
+}
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+<!-- Change Password Modal -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="ChangePassword" method="post">
+                    <div class="form-group">
+                        <input type="password" class="form-control" id="OldPassword" name="OldPassword" required placeholder="Old Password">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" id="NewPassword" name="NewPassword" required placeholder="New Password">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" id="ConfirmPassword" name="ConfirmPassword" required placeholder="Confirm New Password">
+                    </div>
+                    <div class="g-recaptcha" data-sitekey="6LdtygwqAAAAALfzFAYEOeiuhCFjkf8_Tc1uNhKK"></div>
+
+                    <input type="hidden" name="RecaptchaResponse" id="RecaptchaResponse" asp-for="RecaptchaResponse" />
+                    <span asp-validation-for="RecaptchaResponse" class="text-danger"></span>
+                    <br />
+                    <br />
+                    <div class="buttons">
+                        <button type="submit" id="changePasswordLink" class="custom-btn btn-profile">@Localizer["Update Password"]</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer buttons">
+                <button id="changePasswordLink" class="custom-btn btn-profile" data-dismiss="modal">@Localizer["Close"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+<style>
+    body {
+        background-color: #f9f9fa;
+    }
+
+    .padding {
+        padding: 3rem !important;
+    }
+
+    .user-card-full {
+        overflow: hidden;
+    }
+
+    .card {
+        border-radius: 5px;
+        -webkit-box-shadow: 0 1px 20px 0 rgba(69,90,100,0.08);
+        box-shadow: 0 1px 20px 0 rgba(69,90,100,0.08);
+        border: none;
+        margin-bottom: 30px;
+    }
+
+    .m-r-0 {
+        margin-right: 0px;
+    }
+
+    .m-l-0 {
+        margin-left: 0px;
+    }
+
+    .user-card-full .user-profile {
+        border-radius: 5px 0 0 5px;
+    }
+
+    .bg-c-lite-green {
+        background-color: #8E24AA;
+    }
+
+    .user-profile {
+        padding: 20px 0;
+    }
+
+    .card-block {
+        padding: 1.25rem;
+    }
+
+    .m-b-25 {
+        margin-bottom: 25px;
+    }
+
+    .img-radius {
+        border-radius: 5px;
+    }
+
+    h6 {
+        font-size: 14px;
+    }
+
+    .card .card-block p {
+        line-height: 25px;
+    }
+
+    .b-b-default {
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .m-b-20 {
+        margin-bottom: 20px;
+    }
+
+    .p-b-5 {
+        padding-bottom: 5px !important;
+    }
+
+    .text-muted {
+        color: #919aa3 !important;
+    }
+
+    .f-w-600 {
+        font-weight: 600;
+    }
+
+    .user-card-full .social-link li {
+        display: inline-block;
+    }
+
+        .user-card-full .social-link li a {
+            font-size: 20px;
+            margin: 0 10px 0 0;
+            -webkit-transition: all 0.3s ease-in-out;
+            transition: all 0.3s ease-in-out;
+        }
+
+    .custom-btn {
+        text-decoration: none;
+        color: white;
+        font-weight: bold;
+        padding: 10px 20px;
+        border-radius: 25px;
+        display: inline-block;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-profile {
+        background-color: #8E24AA;
+    }
+
+    .modal-header {
+        background-color: #8E24AA;
+    }
+
+    .text-danger {
+        font-size: 0.9em;
+    }
+
+    .g-recaptcha {
+        margin-top: 15px;
+    }
+
+    .modal-content {
+        border-radius: 10px;
+    }
+
+    .modal-header {
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        color: white;
+        border-bottom: none;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .modal-footer {
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+        background-color: #f8f9fa;
+    }
+
+    .profile-img {
+        width: 100px; /* Genişlik */
+        height: 100px; /* Yükseklik */
+        object-fit: cover; /* Resmi alanı dolduracak şekilde kes */
+    }
+</style>
+
+<script src="https://www.google.com/recaptcha/api.js?hl=en" async defer></script>
+<script>
+    document.querySelector('#changePasswordLink').addEventListener('click', function (event) {
+        event.preventDefault();
+        $('#changePasswordModal').modal('show');
+    });
+
+    document.querySelector('form').addEventListener('submit', function (e) {
+        var response = grecaptcha.getResponse();
+        document.getElementById('RecaptchaResponse').value = response;
+    });
+</script>
+ *@

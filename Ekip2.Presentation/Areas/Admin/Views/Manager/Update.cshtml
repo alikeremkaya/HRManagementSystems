@@ -1,0 +1,167 @@
+﻿@model Ekip2.Presentation.Areas.Admin.Models.ManagerVMs.ManagerUpdateVM
+
+@{
+    ViewData["Title"] = "Update";
+
+}
+<h1 class="page-title">@Localizer["Update New Manager"]</h1>
+<form asp-action="Update" method="post" enctype="multipart/form-data" class="form-custom">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group row">
+        <label asp-for="NewImage" class="control-label">@Localizer["NewImage"]</label>
+        <input asp-for="NewImage" type="file" class="form-control" />
+        <span asp-validation-for="NewImage" class="text-danger"></span>
+        @if (Model.ExistingImage != null)
+        {
+            <div class="mt-2">
+                <img src="data:image/png;base64,@(Convert.ToBase64String(Model.ExistingImage))" class="img-thumbnail" />
+            </div>
+        }
+    </div>
+    <div class="custom-form-group">
+        <label asp-for="FirstName" class="control-label">@Localizer["FirstName"]</label>
+        <input asp-for="FirstName" class="form-control" required />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+    </div>
+
+    <div class="custom-form-group">
+        <label asp-for="LastName" class="control-label">@Localizer["LastName"]</label>
+        <input asp-for="LastName" class="form-control" required />
+        <span asp-validation-for="LastName" class="text-danger"></span>
+    </div>
+
+    <div class="custom-form-group">
+        <label asp-for="Email" class="control-label">@Localizer["Email"]</label>
+        <input asp-for="Email" class="form-control" required />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="custom-form-group">
+        <label asp-for="Address" class="control-label">@Localizer["Address"]</label>
+        <textarea asp-for="Address" class="form-control" required></textarea>
+        <span asp-validation-for="Address" class="text-danger"></span>
+    </div>
+
+    <div class="custom-form-group">
+        <label asp-for="PhoneNumber" class="control-label">@Localizer["PhoneNumber"]</label>
+        <input asp-for="PhoneNumber" class="form-control" oninput="validatePhoneNumber(this)" required />
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+    </div>
+    <div class="custom-form-group">
+        <label asp-for="CompanyId" class="control-label">@Localizer["Company"]</label>
+        <select asp-for="CompanyId" asp-items="@Model.Companies" class="form-control" required></select>
+        <span asp-validation-for="CompanyId" class="text-danger"></span>
+    </div>
+
+    <div class="custom-form-group text-center">
+        <input type="submit" value="@Localizer["Save"]" class="btn btn-create" />
+    </div>
+</form>
+
+
+<div class="container mt-3 text-center">
+    <a asp-action="Index" class="btn custom-btn custom-btn-secondary">@Localizer["BackToList"]</a>
+</div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+<style>
+    body {
+        background: #eee;
+    }
+
+    .custom-page-title {
+        color: #4b49ac;
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 2em;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .custom-form {
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .col-form-label {
+        font-weight: bold;
+        color: #4b49ac;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 8px;
+        font-size: 1em;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .custom-btn {
+        text-decoration: none;
+        font-weight: bold;
+        padding: 10px 20px;
+        border-radius: 25px;
+        display: inline-block;
+        transition: background-color 0.3s ease;
+    }
+
+    .custom-btn-primary {
+        background-color: #4b49ac;
+        border: 1px solid #4b49ac;
+        color: white;
+    }
+
+        .custom-btn-primary:hover {
+            background-color: #4b49ac;
+            border: 1px solid #4b49ac;
+        }
+
+    .custom-btn-secondary {
+        background-color: #6C757D;
+        border: 1px solid #6C757D;
+        color: white;
+    }
+
+        .custom-btn-secondary:hover {
+            background-color: #5A6369;
+            border: 1px solid #5A6369;
+        }
+</style>
+
+<script>
+    function validatePhoneNumber(input) {
+        input.value = input.value.replace(/[^0-9]/g, '').slice(0, 11);
+    }
+</script>
+
+
+<script>
+    document.querySelector('input[type="file"]').addEventListener('change', function () {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById('selectedImage').src = e.target.result;
+                document.getElementById('selectedImage').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+
+</script>

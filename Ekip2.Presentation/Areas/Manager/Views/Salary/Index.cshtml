@@ -1,0 +1,431 @@
+﻿@using Ekip2.Presentation.Areas.Manager.Models.SalaryVMs
+@model IEnumerable<SalaryListVM>
+
+@{
+    ViewData["Title"] = "Salaries";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- DataTables CSS ve JS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.min.js"></script>
+
+<br />
+<br />
+<div class="header">
+    <h1 class="page-title">@Localizer["Salaries"]</h1>
+    <a href="javascript:void(0);" class="btn btn-create" onclick="openSalaryCreateModal()">@Localizer["Add"]</a>
+</div>
+
+<div class="table-responsive">
+    <table id="salariesTable" class="table table-hover display nowrap" style="width:100%">
+        <thead>
+            <tr>
+                <th style="background-color:#7978E9; color:white">@Localizer["Amount"]</th>
+                <th style="background-color:#7978E9; color:white">@Localizer["SalaryDate"]</th>
+                <th style="background-color:#7978E9; color:white">@Localizer["EmployeeName"]</th>
+                <th style="background-color:#7978E9; color:white">@Localizer["Actions"]</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Amount)</td>
+                    <td>@Html.DisplayFor(modelItem => item.SalaryDate)</td>
+                    <td>@Html.DisplayFor(modelItem => item.ManagerName)</td>
+                    <td>
+                        <div class="dropdown table-dropdown">
+                            <button class="btn btn-secondary dropdown-toggle table-dropdown-toggle" type="button" id="dropdownMenuButton@item.Id" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="caret"></span>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right table-dropdown-menu" aria-labelledby="dropdownMenuButton@item.Id">
+                                <a class="dropdown-item dropdown-item-update" href="javascript:void(0);" onclick="openSalaryUpdateModal('@item.Id')">@Localizer["Update"]</a>
+                                <button class="dropdown-item dropdown-item-delete" data-id="@item.Id">@Localizer["Delete"]</button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Salary Create Modal -->
+<div id="createSalaryModal" class="modal fade" tabindex="-1" aria-labelledby="createSalaryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content" id="createSalaryModalContent">
+            <!-- Content will be loaded here from create.cshtml -->
+        </div>
+    </div>
+</div>
+
+<!-- Salary Update Modal -->
+<div id="updateSalaryModal" class="modal fade" tabindex="-1" aria-labelledby="updateSalaryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content" id="updateSalaryModalContent">
+            <!-- Content will be loaded here from update.cshtml -->
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function () {
+            $('#salariesTable').DataTable({
+                "paging": true,
+                "ordering": true,
+                "info": true,
+                "searching": true,
+                language: {
+                    lengthMenu: "@Localizer["Show"] _MENU_ @Localizer["entries"]",
+                    search: "@Localizer["Search"]:",
+                    paginate: {
+                        next: "@Localizer["Next"]",
+                        previous: "@Localizer["Previous"]"
+                    },
+                    "info": "_START_ @Localizer["to"]  _END_  @Localizer["entry"] @Localizer["Showing"] ",
+                    "infoEmpty": "@Localizer["No data available in table"]",
+                    "emptyTable": "@Localizer["No data available in table"]"
+                }
+            });
+
+            // Tooltip etkinleştir
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+
+        $('.dropdown-item-delete').click(function () {
+            var id = $(this).data('id');
+            swal({
+                title: "@Localizer["DeleteConfirmation"]",
+                text: "@Localizer["DeleteConfirmationText"]",
+                icon: "warning",
+                buttons: {
+                    cancel: {
+                        text: "@Localizer["No"]",
+                        visible: true,
+                        className: "btn btn-secondary",
+                        closeModal: true
+                    },
+                    confirm: {
+                        text: "@Localizer["Yes"]",
+                        className: "btn btn-danger",
+                        closeModal: false
+                    }
+                }
+            }).then((isConfirm) => {
+                if (isConfirm) {
+                    $.ajax({
+                        url: '@Url.Action("Delete", "Salary", new { area = "Manager" })',
+                        type: 'POST',
+                        data: { id: id },
+                        success: function (response) {
+                            swal({
+                                title: "@Localizer["Deleted"]",
+                                text: "@Localizer["DeleteSuccessText"]",
+                                icon: "success"
+                            }).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function () {
+                            swal("@Localizer["Error"]", "@Localizer["DeleteErrorText"]", "error");
+                        }
+                    });
+                } else {
+                    swal.close();
+                }
+            });
+        });
+
+        function openSalaryCreateModal() {
+            $.ajax({
+                url: '@Url.Action("Create")',
+                type: 'GET',
+                success: function (result) {
+                    $('#createSalaryModalContent').html(result);
+                    $('#createSalaryModal').modal('show');
+                }
+            });
+        }
+
+        function openSalaryUpdateModal(id) {
+            $.ajax({
+                url: '@Url.Action("Update")/' + id,
+                type: 'GET',
+                success: function (result) {
+                    $('#updateSalaryModalContent').html(result);
+                    $('#updateSalaryModal').modal('show');
+                }
+            });
+        }
+    </script>
+}
+
+<style>
+    body {
+        background: #F5F7FF;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding: 0 40px;
+    }
+
+    .page-title {
+        color: #7978E9;
+        margin: 0;
+        font-size: 2em;
+    }
+
+    .btn-create {
+        text-decoration: none;
+        background-color: #7978E9;
+        color: white;
+        font-weight: bold;
+        padding: 8px 15px;
+        border-radius: 15px;
+        display: inline-block;
+        transition: background-color 0.3s ease;
+        font-size: 0.9em;
+        width: 150px;
+        text-align: center;
+    }
+
+    .table-responsive {
+        border-radius: 8px;
+        overflow-x: auto; /* sadece yatay taşma olduğunda kaydırma çubuğu ekler */
+        overflow-y: visible; /* dikey taşma olduğunda kaydırma çubuğu ekler */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        background-color: white;
+        margin: 0 20px; /* Sağdan ve soldan 30px boşluk bırakır */
+        padding: 0 30px; /* İç kenar boşluğu ekler */
+    }
+
+    .table-hover.display.nowrap {
+        margin-left: auto;
+        margin-right: auto;
+        width: calc(100% - 40px); /* Sağdan ve soldan 20px boşluk bırakır */
+    }
+
+    #salariesTable thead th {
+        background-color: #7978E9;
+        color: white;
+    }
+
+    #salariesTable thead {
+        border-bottom: 2px solid #7978E9;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1050;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background-color: #fff;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 500px;
+        border-radius: 8px;
+        position: relative;
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        color: #000;
+        font-size: 30px;
+        font-weight: bold;
+        transition: 0.3s;
+        cursor: pointer;
+    }
+
+        .modal-close:hover,
+        .modal-close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+    .btn {
+        border: none;
+        border-radius: 5px;
+        padding: 10px 15px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn-secondary {
+        color: #fff;
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+
+    .badge {
+        font-size: 0.875em;
+        border-radius: 0.25rem;
+        padding: 0.5em;
+        color: white;
+    }
+
+    .badge-warning {
+        background-color: #EE7B11;
+    }
+
+    .badge-success {
+        background-color: #28a745;
+    }
+
+    .badge-danger {
+        background-color: #dc3545;
+    }
+
+    .dropdown-item:hover {
+        transition: background-color 0.2s ease-in-out;
+    }
+
+    .dropdown-item-approve:hover {
+        background-color: #28a745;
+    }
+
+    .dropdown-item-reject:hover {
+        background-color: #dc3545;
+    }
+
+    .dropdown-item-update:hover {
+        background-color: #7978E9; /* Ekle butonunun rengi */
+    }
+
+    .dropdown-item-delete:hover {
+        background-color: #e67350;
+    }
+
+    .btn-delete-direct {
+        background-color: #ff7f50;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-delete-direct:hover {
+            background-color: #e67350;
+        }
+
+    .dataTables_wrapper .dataTables_length {
+        margin-top: 20px;
+        margin-bottom: 20px;
+        margin-left: 20px;
+    }
+
+    .dataTables_wrapper .dataTables_filter {
+        float: right; /* Arama kutusunu sağa kaydırır */
+        text-align: right; /* Metin hizalamasını sağa kaydırır */
+        padding-right: 20px; /* Sağdan biraz boşluk bırakır */
+    }
+
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter {
+        margin-bottom: 20px;
+    }
+
+        .dataTables_wrapper .dataTables_length label,
+        .dataTables_wrapper .dataTables_filter label {
+            color: #7978E9;
+            font-weight: bold;
+        }
+
+        .dataTables_wrapper .dataTables_length select,
+        .dataTables_wrapper .dataTables_filter input {
+            color: #7978E9;
+            border: 1px solid #7978E9;
+            border-radius: 5px;
+            padding: 5px;
+        }
+
+        .dataTables_wrapper .dataTables_length select {
+            height: 25px;
+            margin-top: 5px;
+            margin-left: 10px;
+        }
+
+        .dataTables_wrapper .dataTables_filter input {
+            width: 150px !important;
+            height: 30px !important;
+            padding: 5px;
+            font-size: 14px;
+            margin-top: 10px;
+            margin-right: 10px;
+            border: 1px solid #7978E9;
+            background-color: #f5f5f5;
+        }
+
+            .dataTables_wrapper .dataTables_filter input:focus {
+                background-color: #e0e0e0;
+                outline: none;
+                border-color: #7978E9;
+            }
+
+    .dataTables_wrapper .dataTables_info {
+        margin-left: 20px;
+    }
+
+    .dropdown-menu {
+        position: fixed;
+        top: 0;
+        left: 0;
+        transform: translate(0, 0);
+        z-index: 1000;
+        display: none;
+        background-color: white;
+        min-width: 10rem;
+        padding: 0.5rem 0;
+        margin: 0.125rem 0 0;
+        font-size: 1rem;
+        color: #212529;
+        text-align: left;
+        list-style: none;
+        background-clip: padding-box;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        border-radius: 0.25rem;
+        max-height: 300px;
+        overflow: auto;
+    }
+</style>

@@ -1,0 +1,230 @@
+﻿@model Ekip2.Presentation.Areas.Admin.Models.ManagerVMs.ManagerCreateVM
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<style>
+    body {
+        background: #eee;
+    }
+
+    .custom-page-title {
+        color: #4b49ac;
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 2em;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .custom-form {
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .col-form-label {
+        font-weight: bold;
+        color: #4b49ac;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 8px;
+        font-size: 1em;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .custom-btn {
+        text-decoration: none;
+        font-weight: bold;
+        padding: 10px 20px;
+        border-radius: 25px;
+        display: inline-block;
+        transition: background-color 0.3s ease;
+    }
+
+    .custom-btn-primary {
+        background-color: #4b49ac;
+        border: 1px solid #4b49ac;
+        color: white;
+    }
+
+        .custom-btn-primary:hover {
+            background-color: #4b49ac;
+            border: 1px solid #4b49ac;
+        }
+
+    .custom-btn-secondary {
+        background-color: #6C757D;
+        border: 1px solid #6C757D;
+        color: white;
+    }
+
+        .custom-btn-secondary:hover {
+            background-color: #5A6369;
+            border: 1px solid #5A6369;
+        }
+
+    .text-danger {
+        font-size: 0.875em;
+    }
+</style>
+<h1 class="page-title">@Localizer["Create New Manager"]</h1>
+<form id="managerCreateForm" asp-action="Create" method="post" enctype="multipart/form-data" class="custom-form">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group row">
+        <label asp-for="NewImage" class="col-sm-3 col-form-label">@Localizer["NewImage"]</label>
+        <input asp-for="NewImage" type="file" class="form-control" style="display: inline-block;" />
+        <img id="selectedImage" src="#" alt="Selected Image" style="display:none; height: 100px; width: 100px; margin-left: 10px;" />
+        <span asp-validation-for="NewImage" class="text-danger"></span>
+    </div>
+
+    <div class="form-group row">
+        <label asp-for="FirstName" class="col-sm-3 col-form-label">@Localizer["FirstName"]</label>
+        <div class="col-sm-9">
+            <input asp-for="FirstName" class="form-control" required />
+            <span asp-validation-for="FirstName" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label asp-for="LastName" class="col-sm-3 col-form-label">@Localizer["LastName"]</label>
+        <div class="col-sm-9">
+            <input asp-for="LastName" class="form-control" required />
+            <span asp-validation-for="LastName" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label asp-for="Email" class="col-sm-3 col-form-label">@Localizer["Email"]</label>
+        <div class="col-sm-9">
+            <input type="email" asp-for="Email" class="form-control" required />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label asp-for="Address" class="col-sm-3 col-form-label">@Localizer["Address"]</label>
+        <div class="col-sm-9">
+            <textarea asp-for="Address" class="form-control" required></textarea>
+            <span asp-validation-for="Address" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label asp-for="PhoneNumber" class="col-sm-3 col-form-label">@Localizer["PhoneNumber"]</label>
+        <div class="col-sm-9">
+            <input asp-for="PhoneNumber" class="form-control" required oninput="validatePhoneNumber(this)" />
+            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label asp-for="CompanyId" class="col-sm-3 col-form-label">@Localizer["Company"]</label>
+        <div class="col-sm-9">
+            <select asp-for="CompanyId" asp-items="@Model.Companies" class="form-control" required>
+                <option value="">--- Select ---</option>
+            </select>
+            <span asp-validation-for="CompanyId" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group row justify-content-center">
+        <div class="col-sm-9">
+            <input type="submit" value="@Localizer["Create"]" class="btn custom-btn custom-btn-primary" />
+        </div>
+    </div>
+</form>
+
+<div class="container mt-3 text-center">
+    <a asp-action="Index" class="btn custom-btn custom-btn-secondary">@Localizer["BackToList"]</a>
+</div>
+<script>
+    function validatePhoneNumber(input) {
+        input.value = input.value.replace(/[^0-9]/g, '');
+    }
+</script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.11/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        function validatePhoneNumber(input) {
+            input.value = input.value.replace(/[^0-9]/g, '').slice(0, 11);
+        }
+    </script>
+
+    <script>
+       
+
+        document.querySelector('input[type="file"]').addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('selectedImage').src = e.target.result;
+                    document.getElementById('selectedImage').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+
+        $(document).ready(function () {
+            var fieldRequiredMessage = '@Localizer["FieldRequired"]';
+            $('#managerCreateForm').validate({
+                errorClass: 'text-danger',
+                validClass: 'text-success',
+                errorPlacement: function (error, element) {
+                    error.insertAfter(element);
+                },
+                messages: {
+                    NewImage: fieldRequiredMessage,
+                    FirstName: fieldRequiredMessage,
+                    LastName: fieldRequiredMessage,
+                    Email: fieldRequiredMessage,
+                    Address: fieldRequiredMessage,
+                    PhoneNumber: fieldRequiredMessage,
+                    CompanyId: fieldRequiredMessage
+                },
+                submitHandler: function (form) {
+                    $.ajax({
+                        type: $(form).attr('method'),
+                        url: $(form).attr('action'),
+                        data: new FormData(form),
+                        contentType: false,
+                        processData: false,
+                        success: function (response) {
+                            if (response.success) {
+                                window.location.href = response.redirectUrl;
+                            } else {
+                                $.each(response.errors, function (key, value) {
+                                    var errorElement = $('[name="' + key + '"]').next('.text-danger');
+                                    errorElement.text(value);
+                                });
+                            }
+                        }
+                    });
+                    return false; // prevent normal form submission
+                }
+            });
+        });
+
+    </script>
+}

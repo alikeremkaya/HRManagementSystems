@@ -1,0 +1,331 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+@using System.Security.Claims
+@using Ekip2.Application.Services.AdvanceServices
+@using Ekip2.Application.Services.LeaveService
+@using Ekip2.Presentation.Areas.Employee.Models.EmployeeAdvanceVMs
+@using Ekip2.Presentation.Areas.Manager.Models.LeaveVMs
+@inject IManagerService managerService;
+@inject IAdminService adminService;
+@inject ILeaveTypeService leaveTypeService;
+@inject IAdvanceService advanceService;
+@inject ILeaveService leaveService;
+@inject ICompanyService companyService;
+@{
+    ViewData["Title"] = "Manager Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var loginAdmin = await adminService.GetByIdentityUserIdAsync(userId);
+    var advances = await advanceService.GetAllAsync();
+    var managers = await managerService.GetAllAsync();
+    var managerList = managers.Data.Adapt<List<ManagerListVM>>();
+    var advanceVMs = advances.Data.Adapt<List<AdvanceListVM>>();
+    var companies = await companyService.GetAllAsync();
+    var companyList = companies.Data.Adapt<List<CompanyListVM>>();
+}
+<head>
+    <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+</head>
+<body>
+    <div class="main-panel">
+        <div class="content-wrapper">
+            <div class="row">
+                <div class="col-md-12 grid-margin">
+                    <div class="row">
+                        <div class="col-12 col-xl-8 mb-4 mb-xl-0">
+                            <h3 class="font-weight-bold">Welcome @loginAdmin.Data.FirstName </h3>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12 grid-margin transparent">
+                <div class="row">
+                    <div class="col-md-4 mb-4 stretch-card transparent">
+                        <div class="card card-tale same-height">
+                            <div class="card-body">
+                                <p class="mb-4">Total Users</p>
+                                <p class="fs-30 mb-2">@managerList.Count</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4 stretch-card transparent">
+                        <div class="card card-dark-blue same-height">
+                            <div class="card-body">
+                                <p class="mb-4">Total Companies</p>
+                                <p class="fs-30 mb-2">@companyList.Count</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4 stretch-card transparent">
+                        <div class="card same-height">
+                            <div class="card-body">
+                                <div id="clock" class="digital-clock"></div>
+                                <div id="date" class="date"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-md-12 grid-margin stretch-card">
+                <div class="card position-relative">
+                    <div class="card-body">
+                        <div id="detailedReports" class="carousel slide detailed-report-carousel position-static pt-2" data-ride="carousel">
+
+                            <div class="row">
+                                <div class="col-md-6 border-right">
+                                    <div class="table-responsive mb-3 mb-md-0 mt-3" style="overflow-y: auto; height: 300px;">
+                                        <!-- Add this style -->
+                                        <div class="ml-xl-4 mt-3">
+                                            <h3 class="font-weight-500 mb-xl-4 text-primary">Companies</h3>
+                                        </div>
+                                        <table class="table table-borderless report-table">
+                                            <thead>
+                                                <tr>
+                                                    <td class="text-muted">#</td>
+                                                    <td class="text-muted">Company Name</td>
+                                                    <td class="text-muted">Address</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @{
+                                                    int rowNumber = 1;
+                                                }
+                                                @foreach (var item in companyList)
+                                                {
+                                                    <tr>
+                                                        <td>@rowNumber</td>
+                                                        <td>@item.Name</td>
+                                                        <td>@item.Address</td>
+                                                    </tr>
+                                                    rowNumber++;
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="table-responsive mb-3 mb-md-0 mt-3" style="overflow-y: auto; height: 300px;">
+                                        <!-- Add this style -->
+                                        <div class="ml-xl-4 mt-3">
+                                            <h3 class="font-weight-500 mb-xl-4 text-primary">Users</h3>
+                                        </div>
+                                        <table class="table table-borderless report-table">
+                                            <thead>
+                                                <tr>
+                                                    <td class="text-muted">#</td>
+                                                    <td class="text-muted">Employee Name</td>
+                                                    <td class="text-muted">Leave Status</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @{
+                                                    rowNumber = 1;
+                                                }
+                                                @foreach (var item in managerList)
+                                                {
+                                                    <tr>
+                                                        <td>@rowNumber</td>
+                                                        <td>@item.FirstName @item.LastName</td>
+                                                        <td>@item.CompanyName</td>
+                                                    </tr>
+                                                    rowNumber++;
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+    </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div id="success-message" class="alert alert-success custom-alert">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div id="error-message" class="alert alert-danger custom-alert">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+    <style>
+        .custom-alert {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1050;
+            width: auto;
+            min-width: auto;
+            max-width: auto;
+        }
+    </style>
+
+    <script>
+        $(document).ready(function () {
+            // Bugünün tarihini almak ve formatlamak
+            function formatDate(date) {
+                var day = date.getDate();
+                var month = date.getMonth() + 1; // January is 0!
+                var year = date.getFullYear();
+
+                if (day < 10) {
+                    day = '0' + day;
+                }
+                if (month < 10) {
+                    month = '0' + month;
+                }
+
+                return day + ' ' + month + ' ' + year;
+            }
+
+            // Bugünün tarihini göster
+            var today = new Date();
+            $('#currentDate').text(formatDate(today));
+
+            // Takvimi başlat
+            $("#datepicker").datepicker({
+                onSelect: function (dateText, inst) {
+                    $('#currentDate').text(dateText);
+                }
+            }).hide();
+
+            // Butona tıklandığında takvimi göster/gizle
+            $('#calendarButton').click(function () {
+                $('#datepicker').toggle();
+            });
+        });
+        function updateTime() {
+            var now = new Date();
+            var hours = now.getHours().toString().padStart(2, '0');
+            var minutes = now.getMinutes().toString().padStart(2, '0');
+            var seconds = now.getSeconds().toString().padStart(2, '0');
+
+            var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            var dayName = days[now.getDay()];
+            var day = now.getDate().toString().padStart(2, '0');
+            var month = months[now.getMonth()];
+            var year = now.getFullYear();
+
+            var timeString = hours + ':' + minutes ;
+            var dateString = dayName + ', ' + day + ' ' + month + ' ' + year;
+
+            document.getElementById('clock').textContent = timeString;
+            document.getElementById('date').textContent = dateString;
+        }
+
+        setInterval(updateTime, 1000);
+        updateTime();
+
+    </script>
+    <script>
+        $(document).ready(function () {
+            setTimeout(function () {
+                $("#success-message").fadeOut("slow", function () {
+                    $(this).remove();
+                });
+                $("#error-message").fadeOut("slow", function () {
+                    $(this).remove();
+                });
+            }, 3000);
+        });
+    </script>
+
+
+    <style>
+        .main-panel {
+            background-color: #F5F7FF;
+        }
+
+        #datepicker {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            z-index: 1000;
+            background: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            display: none;
+        }
+
+        
+
+        .card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+            max-width: 300px;
+            margin: 50px auto;
+        }
+
+        .digital-clock {
+            font-size: 48px;
+            color: #7978E9;
+            margin-bottom: 10px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .date {
+            font-size: 20px;
+            color: #555;
+        }
+
+        .table-responsive {
+            overflow-y: auto;
+            height: 300px;
+        }
+            .btn-profile {
+        background-color: #7978E9
+    }
+
+    .modal-header {
+        background-color: #7978E9
+    }
+
+    .text-danger {
+        font-size: 0.9em;
+    }
+
+    .g-recaptcha {
+        margin-top: 15px;
+    }
+
+   
+
+    .profile-img {
+        width: 75px; 
+        height: 75px; 
+        object-fit: cover;
+    }
+
+  
+
+       
+
+    </style>
+</body>
+
+</div>
+
+
+

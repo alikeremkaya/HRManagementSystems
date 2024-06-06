@@ -1,0 +1,258 @@
+﻿@model IEnumerable<Ekip2.Presentation.Areas.Admin.Models.ManagerVMs.ManagerListVM>
+
+@{
+    ViewData["Title"] = "Managers";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="page-title">@Localizer["Managers"]</h1>
+        <button class="btn btn-create" data-toggle="modal" data-target="#createModal">@Localizer["Add"]</button>
+    </div>
+
+    <div class="card-container row">
+        @foreach (var (item, index) in Model.Select((value, i) => (value, i + 1)))
+        {
+            <div class="col-md-3 mb-4">
+                <div class="card h-100 card-animated">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.FirstName @item.LastName</h5>
+                        <div class="image-container">
+                            @if (item.Image is null)
+                            {
+                                <p class="image-placeholder">@Localizer["NoImagePleaseAdd"]</p>
+                            }
+                            else
+                            {
+                                <img class="image-preview" src="@($"data:image/png;base64,{Convert.ToBase64String(item.Image)}")" onclick="openModal(this.src)" />
+                            }
+                        </div>
+                        <p class="card-text">@Localizer["Email"]: @item.Email</p>
+                        <p class="card-text">@Localizer["Address"]: @item.Address</p>
+                        <p class="card-text">@Localizer["Phone"]: @item.PhoneNumber</p>
+                        <p class="card-text">@Localizer["Company"]: @item.CompanyName</p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="action-links">
+                            <button class="btn btn-update" data-toggle="modal" data-target="#updateModal" data-id="@item.Id">@Localizer["Update"]</button>
+                            <button class="btn btn-delete" data-id="@item.Id">@Localizer["Delete"]</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Create Modal -->
+<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createModalLabel"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="createModalContent"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Update Modal -->
+<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateModalLabel"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="updateModalContent"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function () {
+            $('#createModal').on('show.bs.modal', function () {
+                var url = '@Url.Action("Create", "Manager")';
+                $('#createModalContent').load(url);
+            });
+
+            $('#updateModal').on('show.bs.modal', function (e) {
+                var button = $(e.relatedTarget);
+                var id = button.data('id');
+                var url = '@Url.Action("Update", "Manager")/' + id;
+                $('#updateModalContent').load(url);
+            });
+
+            $('.btn-delete').click(function () {
+                var id = $(this).data('id');
+                swal({
+                    title: "@Localizer["DeleteConfirmation"]",
+                    text: "@Localizer["DeleteConfirmationText"]",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: "@Localizer["No"]",
+                            visible: true,
+                            className: "btn btn-secondary",
+                            closeModal: true
+                        },
+                        confirm: {
+                            text: "@Localizer["Yes"]",
+                            className: "btn btn-danger",
+                            closeModal: false
+                        }
+                    }
+                }).then((isConfirm) => {
+                    if (isConfirm) {
+                        $.ajax({
+                            url: '@Url.Action("Delete", "Manager")/' + id,
+                            type: 'POST',
+                            success: function (response) {
+                                swal({
+                                    title: "@Localizer["Deleted"]",
+                                    text: "@Localizer["DeleteSuccessText"]",
+                                    icon: "success"
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            },
+                            error: function () {
+                                swal("@Localizer["Error"]", "@Localizer["DeleteErrorText"]", "error");
+                            }
+                        });
+                    } else {
+                        swal.close();
+                    }
+                });
+            });
+
+
+        });
+    </script>
+}
+
+<style>
+    body {
+        background: #F5F7FF;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .page-title {
+        color: #7978E9;
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 2em;
+    }
+
+    .btn-create {
+        text-decoration: none;
+        color: white;
+        font-weight: bold;
+        background-color: #7978E9;
+        padding: 8px 15px;
+        border-radius: 15px;
+        display: inline-block;
+        transition: background-color 0.2s ease;
+        font-size: 0.9em;
+        width: 130px;
+        text-align: center;
+    }
+
+        .btn-create:hover {
+            background-color: #7978E9;
+        }
+
+    .card-container {
+        margin-top: 20px;
+    }
+
+    .card-animated {
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s ease-out;
+    }
+
+        .card-animated:hover {
+            transform: translateY(-5px);
+        }
+
+    .image-container {
+        height: 200px; /* İstediğiniz boyutu ayarlayabilirsiniz */
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        background-color: #f9f9f9; /* Arka plan rengi ekledim */
+    }
+
+    .image-preview {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: cover;
+    }
+
+    .image-placeholder {
+        color: #aaa;
+        font-size: 0.9em;
+        text-align: center;
+    }
+
+    .card-footer {
+        background-color: #f9f9f9;
+        border-top: 1px solid #ddd;
+    }
+
+    .action-links {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .btn-update,
+    .btn-delete {
+        text-decoration: none;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        display: inline-block;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-update {
+        background-color: #7978E9;
+        border: 1px solid #7978E9;
+    }
+
+    .btn-delete {
+        background-color: #dc3545;
+        border: 1px solid #dc3545;
+    }
+
+        .btn-update:hover,
+        .btn-delete:hover {
+            background-color: #7978E9;
+        }
+</style>

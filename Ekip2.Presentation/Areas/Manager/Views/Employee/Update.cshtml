@@ -1,0 +1,184 @@
+﻿@model Ekip2.Presentation.Areas.Manager.Models.EmployeeVMs.EmployeeUpdateVM
+
+@{
+    ViewData["Title"] = "Update Employee";
+}
+
+<style>
+    body {
+        background: #eee;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .page-title {
+        color: #7978E9;
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 2em;
+    }
+
+    .btn-save {
+        text-decoration: none;
+        color: white;
+        font-weight: bold;
+        background-color: #7978E9;
+        padding: 10px 20px;
+        border-radius: 25px;
+        display: inline-block;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-save:hover {
+            background-color: #4b49ac;
+        }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-control {
+        border-radius: 5px;
+    }
+
+    .text-danger {
+        font-size: 0.875em;
+    }
+
+    .btn-secondary {
+        text-decoration: none;
+        color: white;
+        font-weight: bold;
+        background-color: #7978E9;
+        padding: 10px 20px;
+        border-radius: 25px;
+        display: inline-block;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-secondary:hover {
+            background-color: #7978E9;
+        }
+</style>
+
+<h1 class="page-title">@Localizer["UpdateEmployee"]</h1>
+
+<form id="employeeUpdateForm" asp-action="Update" method="post" enctype="multipart/form-data" class="form-custom">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="form-group">
+        <label asp-for="NewImage" class="control-label">@Localizer["NewImage"]</label>
+        <input asp-for="NewImage" type="file" class="form-control" />
+        <span asp-validation-for="NewImage" class="text-danger"></span>
+        @if (Model.ExistingImage != null)
+        {
+            <div class="mt-2">
+                <img src="data:image/png;base64,@(Convert.ToBase64String(Model.ExistingImage))" class="img-thumbnail" />
+            </div>
+        }
+    </div>
+    <div class="form-group">
+        <label asp-for="FirstName" class="control-label">@Localizer["FirstName"]</label>
+        <input asp-for="FirstName" class="form-control" required />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="LastName" class="control-label">@Localizer["LastName"]</label>
+        <input asp-for="LastName" class="form-control" required />
+        <span asp-validation-for="LastName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Email" class="control-label">@Localizer["Email"]</label>
+        <input asp-for="Email" class="form-control" required />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Address" class="control-label">@Localizer["Address"]</label>
+        <input asp-for="Address" class="form-control" required />
+        <span asp-validation-for="Address" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="PhoneNumber" class="control-label">@Localizer["PhoneNumber"]</label>
+        <input asp-for="PhoneNumber" class="form-control" required />
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Roles" class="control-label">@Localizer["Role"]</label>
+        <select asp-for="Roles" asp-items="@Model.RoleList" class="form-control" required>
+            <option value="">--- Select ---</option>
+        </select>
+        <span asp-validation-for="Roles" class="text-danger"></span>
+    </div>
+    <div class="form-group" hidden>
+        <label asp-for="CompanyId" class="control-label"></label>
+        <input asp-for="CompanyId" class="form-control" readonly />
+        <span asp-validation-for="CompanyId" class="text-danger"></span>
+    </div>
+    <div class="form-group" hidden>
+        <label asp-for="CompanyName" class="control-label">@Localizer["Company"]</label>
+        <input asp-for="CompanyName" class="form-control" />
+        <span asp-validation-for="CompanyName" class="text-danger"></span>
+    </div>
+    <div class="form-group text-center">
+        <input type="submit" value="@Localizer["Save"]" class="btn btn-save" />
+    </div>
+</form>
+
+<div class="mt-4 text-center">
+    <a asp-action="Index" class="btn btn-secondary">@Localizer["BackToList"]</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.11/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#employeeUpdateForm').validate({
+                errorClass: 'text-danger',
+                validClass: 'text-success',
+                errorPlacement: function (error, element) {
+                    error.insertAfter(element);
+                },
+                messages: {
+                    NewImage: "Lütfen bu alanı doldurun.",
+                    FirstName: "Lütfen bu alanı doldurun.",
+                    LastName: "Lütfen bu alanı doldurun.",
+                    Email: "Lütfen bu alanı doldurun.",
+                    Address: "Lütfen bu alanı doldurun.",
+                    PhoneNumber: "Lütfen bu alanı doldurun.",
+                    Roles: "Lütfen bu alanı doldurun."
+                },
+                submitHandler: function (form) {
+                    $.ajax({
+                        type: $(form).attr('method'),
+                        url: $(form).attr('action'),
+                        data: new FormData(form),
+                        contentType: false,
+                        processData: false,
+                        success: function (response) {
+                            if (response.success) {
+                                window.location.href = response.redirectUrl;
+                            } else {
+                                $.each(response.errors, function (key, value) {
+                                    var errorElement = $('[name="' + key + '"]').next('.text-danger');
+                                    errorElement.text(value);
+                                });
+                            }
+                        }
+                    });
+                    return false; 
+                }
+            });
+        });
+    </script>
+}
+<script>
+    function validatePhoneNumber(input) {
+        input.value = input.value.replace(/[^0-9]/g, '').slice(0, 11);
+    }
+</script>

@@ -1,0 +1,205 @@
+﻿@model Ekip2.Presentation.Areas.Manager.Models.ExpenseVMs.ExpenseUpdateVM
+
+@{
+    ViewData["Title"] = "Update Expense";
+}
+
+<style>
+    body {
+        background: #eee;
+    }
+
+    .custom-page-title {
+        color: #7978E9;
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 2em;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .form-custom {
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .control-label {
+        font-weight: bold;
+        color: #7978E9;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 8px;
+        font-size: 1em;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .btn {
+        text-decoration: none;
+        font-weight: bold;
+        padding: 10px 20px;
+        border-radius: 25px;
+        display: inline-block;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-primary {
+        background-color: #7978E9;
+        border: 1px solid #7978E9;
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background-color: #4b49ac;
+            border: 1px solid #4b49ac;
+        }
+
+    .btn-secondary {
+        background-color: #6C757D;
+        border: 1px solid #6C757D;
+        color: white;
+    }
+
+        .btn-secondary:hover {
+            background-color: #5A6369;
+            border: 1px solid #5A6369;
+        }
+
+    .text-danger {
+        font-size: 0.875em;
+    }
+</style>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h1 class="custom-page-title">@Localizer["Update Expense"]</h1>
+            <form id="expenseUpdateForm" asp-action="Update" method="post" enctype="multipart/form-data" class="form-custom">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="NewImage" class="control-label">@Localizer["NewImage"]</label>
+                    <input asp-for="NewImage" type="file" class="form-control" />
+                    <span asp-validation-for="NewImage" class="text-danger"></span>
+                    @if (Model.ExistingImage != null)
+                    {
+                        <div class="mt-2">
+                            <img src="data:image/png;base64,@(Convert.ToBase64String(Model.ExistingImage))" class="img-thumbnail" />
+                        </div>
+                    }
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Amount" class="control-label">@Localizer["Amount"]</label>
+                    <input asp-for="Amount" class="form-control" required />
+                    <span asp-validation-for="Amount" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ExpenseDate" class="control-label">@Localizer["ExpenseDate"]</label>
+                    <input id="ExpenseDate" asp-for="ExpenseDate" type="date" class="form-control" required />
+                    <span asp-validation-for="ExpenseDate" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Description" class="control-label">@Localizer["Description"]</label>
+                    <input asp-for="Description" class="form-control" required />
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ManagerId" class="control-label">@Localizer["Employee"]</label>
+                    <select asp-for="ManagerId" asp-items="@Model.Managers" class="form-control" required>
+                        <option value="">--- @Localizer["SelectEmployee"] ---</option>
+                    </select>
+                    <span asp-validation-for="ManagerId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group text-center">
+                    <input type="submit" value="@Localizer["Save"]" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="container mt-3 text-center">
+    <a asp-action="Index" class="btn btn-secondary">@Localizer["BackToList"]</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.11/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#expenseUpdateForm').validate({
+                errorClass: 'text-danger',
+                validClass: 'text-success',
+                errorPlacement: function (error, element) {
+                    error.insertAfter(element);
+                },
+                messages: {
+                    NewImage: "Lütfen bu alanı doldurun.",
+                    Amount: "Lütfen bu alanı doldurun.",
+                    ExpenceDate: "Lütfen bu alanı doldurun.",
+                    Description: "Lütfen bu alanı doldurun.",
+                    ManagerId: "Lütfen bu alanı doldurun."
+                },
+                submitHandler: function (form) {
+                    $.ajax({
+                        type: $(form).attr('method'),
+                        url: $(form).attr('action'),
+                        data: new FormData(form),
+                        contentType: false,
+                        processData: false,
+                        success: function (response) {
+                            if (response.success) {
+                                window.location.href = response.redirectUrl;
+                            } else {
+                                $.each(response.errors, function (key, value) {
+                                    var errorElement = $('[name="' + key + '"]').next('.text-danger');
+                                    errorElement.text(value);
+                                });
+                            }
+                        }
+                    });
+                    return false; 
+            });
+        });
+    </script>
+}
+<script>
+    document.querySelector('form').addEventListener('submit', function (event) {
+        var advanceDate = new Date(document.getElementById('ExpenseDate').value);
+        var now = new Date();
+
+      
+        if (advanceDate < new Date(now.getFullYear(), now.getMonth(), now.getDate())) {
+            var advanceDateInput = document.getElementById('ExpenseDate');
+            advanceDateInput.setCustomValidity('@Localizer["Start date must be later than the current date."]');
+            advanceDateInput.reportValidity();
+            event.preventDefault(); 
+            return;
+        }
+    });
+
+    document.getElementById('ExpenseDate').addEventListener('change', function () {
+        var advanceDateInput = document.getElementById('ExpenseDate');
+        advanceDateInput.setCustomValidity('');
+    });
+</script>

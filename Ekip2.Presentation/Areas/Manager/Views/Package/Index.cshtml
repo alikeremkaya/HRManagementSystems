@@ -1,0 +1,250 @@
+﻿@model IEnumerable<Ekip2.Presentation.Areas.Admin.Models.PackageVMs.PackageListVM>
+@inject IManagerService _managerService;
+@inject ICompanyService _companyService;
+@using System.Security.Claims
+@{
+    ViewData["Title"] = "Pricing Plans";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var loginManager = await _managerService.GetByIdentityUserIdAsync(userId);
+    var company = loginManager.Data.CompanyId;
+    var companies = await _companyService.GetByIdAsync(company);
+}
+
+<section class="plans__container">
+    <div class="plans">
+        <div class="plansHero">
+            <h1 style="color:#7978E9; class="plansHero__title ">@Localizer["PricingPackages"]</h1>
+            <p style="color:#7978E9; class="plansHero__subtitle">@Localizer["No contracts. No surprise fees."]</p>
+        </div>
+        <div class="planItem__container">
+            @foreach (var plan in Model)
+            {
+                <div class="planItem @(plan.Id == companies.Data.PackageId ? "active-plan" : "")">
+                    <div class="card">
+                        <div class="card__header">
+                            <h2>@plan.Name</h2>
+                        </div>
+                        <div class="card__desc">@plan.Description</div>
+                    </div>
+                    <div class="price">
+                        @if (plan.Price == 0)
+                        {
+                            <span>$0</span>
+                            <span>/ month</span>
+                        }
+                        else if (plan.Price == -1)
+                        {
+                            <span>Let's Talk</span>
+                        }
+                        else
+                        {
+                            <span>$@plan.Price</span>
+                            <span>/ month</span>
+                        }
+                    </div>
+                    
+                </div>
+            }
+        </div>
+    </div>
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+</section>
+<style>
+
+    .plans__container {
+        padding: 2rem;
+        background-color: #F5F7FF;
+    }
+
+    .plans {
+        max-width: 1200px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .plansHero {
+        margin-bottom: 2rem;
+    }
+
+    .plansHero__title {
+        font-size: 2.5rem;
+        font-weight: bold;
+    }
+
+    .plansHero__subtitle {
+        font-size: 1.25rem;
+        color: #555;
+    }
+
+    .planItem__container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+
+    .modal-body {
+        padding: 30px;
+        text-align: center;
+    }
+
+    .modal-content {
+        background-color: #fff;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 500px;
+        border-radius: 8px;
+    }
+
+    .modal-header {
+        background-color: #fff;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .planItem {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        text-align: left;
+        width: calc(33.333% - 1rem); /* 3 cards per row with spacing */
+        box-sizing: border-box;
+        margin-bottom: 1rem; /* Add some margin at the bottom for spacing */
+    }
+
+    .active-plan {
+        border: 2px solid #8E24AA;
+        box-shadow: 0 0 10px rgba(142, 36, 170, 0.5);
+    }
+
+        .active-plan .card__desc {
+            color: #777;
+        }
+
+        .active-plan .button {
+            background-color: #7978E9;
+            color: white;
+        }
+
+    .card {
+        margin-bottom: 1rem;
+    }
+
+    .card__header {
+        margin-bottom: 1rem;
+    }
+
+    .card__desc {
+        color: #777;
+        font-size: 1rem;
+    }
+
+    .price {
+        font-size: 1.25rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+    }
+
+    .button {
+        background-color: #7978E9;
+        border: none;
+        border-radius: 4px;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        cursor: pointer;
+        font-size: 1rem;
+        width: 100%;
+        .dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter
+
+    {
+        margin-bottom: 20px;
+    }
+
+    .dataTables_wrapper .dataTables_length label,
+    .dataTables_wrapper .dataTables_filter label {
+        color: #7978E9;
+        font-weight: bold;
+    }
+
+    .dataTables_wrapper .dataTables_length select,
+    .dataTables_wrapper .dataTables_filter input {
+        color: #7978E9;
+        border: 1px solid #7978E9;
+        border-radius: 5px;
+        padding: 5px;
+    }
+
+    .dataTables_wrapper .dataTables_length select {
+        height: 25px;
+        margin-top: 5px;
+        margin-left: 10px;
+    }
+
+    .dataTables_wrapper .dataTables_filter input {
+        width: 150px !important;
+        height: 30px !important;
+        padding: 5px;
+        font-size: 14px;
+        margin-top: 10px;
+        margin-right: 10px;
+        border: 1px solid #7978E9;
+        background-color: #f5f5f5;
+    }
+
+        .dataTables_wrapper .dataTables_filter input:focus {
+            background-color: #e0e0e0;
+            outline: none;
+            border-color: #7978E9;
+        }
+    }
+
+</style>
+<script>
+    function selectPackage(packageId) {
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("SelectPackage", "Package")",
+            data: { id: packageId },
+            success: function (result) {
+                if (result.success) {
+                    // Update the button text and style
+                    $(`#package-${packageId} button`).text("Cancel Subscription");
+                    $(`#package-${packageId}`).addClass("active-plan");
+                } else {
+                    alert("Error selecting package");
+                }
+            }
+        });
+    }
+
+    function cancelSubscription(packageId) {
+        if (confirm("Are you sure you want to cancel your subscription?")) {
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("CancelSubscription", "Package")",
+                data: { id: packageId },
+                success: function (result) {
+                    if (result.success) {
+                        // Update the button text and style
+                        $(`#package-${packageId} button`).text("Choose This Plan");
+                        $(`#package-${packageId}`).removeClass("active-plan");
+                    } else {
+                        alert("Error canceling subscription");
+                    }
+                }
+            });
+        }
+    }
+</script>

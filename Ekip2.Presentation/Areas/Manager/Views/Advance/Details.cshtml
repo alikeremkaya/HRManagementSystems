@@ -1,0 +1,154 @@
+﻿@model Ekip2.Presentation.Areas.Manager.Models.AdvanceVMs.AdvanceDetailsVM
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="details-container card">
+    @if (Model.Image != null && Model.Image.Length > 0)
+    {
+        <img src="data:image;base64,@Convert.ToBase64String(Model.Image)" class="card-img-top zoomable-image" alt="Advance Image" />
+    }
+    <div class="card-body">
+        <p class="card-text"><strong>Employee:</strong> @Model.ManagerFullName</p>
+        <p class="card-text"><strong>Advance Date:</strong> @Model.AdvanceDate.ToString("dd/MM/yyyy")</p>
+        <p class="card-text"><strong>Status:</strong> @Model.AdvanceStatus</p>
+        <p class="card-text"><strong>Amount:</strong> @Model.Amount</p>
+    </div>
+    <div class="card-body">
+        <a href="@Url.Action("Index", "Employee")" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>
+
+<!-- Modal for image zoom -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+               
+              
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" src="" class="img-fluid" alt="Advance Image">
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .details-container {
+            width: 24rem; /* Genişliği artırdık */
+            margin: 50px auto; /* Üstten biraz boşluk eklemek için margin-top değerini arttırdık */
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+        }
+
+        h2 {
+            color: #7978E9;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .details-container .card-text {
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        .details-container img {
+            display: block;
+            margin: 20px auto;
+            max-width: 200px;
+            max-height: 200px;
+            cursor: pointer; /* Zoom için cursor pointer yap */
+            transition: transform 0.2s ease-in-out;
+        }
+
+            .details-container img:hover {
+                transform: scale(1.5); /* Zoom efekti */
+            }
+
+        .btn-secondary {
+            background-color: #7978E9;
+            border-color: #7978E9;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+            .btn-secondary:hover {
+                background-color: #5c5ab3;
+                border-color: #5c5ab3;
+            }
+
+        .collapse-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+            .collapse-content.show {
+                max-height: 500px; /* İçeriğin yükseklik sınırı */
+            }
+
+        .btn-toggle {
+            background-color: transparent;
+            border: none;
+            color: #7978E9;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+            .btn-toggle:hover {
+                color: #5c5ab3;
+            }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const cardImage = document.querySelector('.card-img-top');
+            if (cardImage) {
+                cardImage.addEventListener('click', () => {
+                    const modalImage = document.getElementById('modalImage');
+                    modalImage.src = cardImage.src;
+                    const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
+                    imageModal.show();
+                });
+            }
+
+            const toggleButton = document.createElement('button');
+            toggleButton.classList.add('btn-toggle');
+            toggleButton.textContent = 'Show Details';
+            const cardBody = document.querySelector('.details-container .card-body');
+            const collapseContent = document.createElement('div');
+            collapseContent.classList.add('collapse-content');
+
+            while (cardBody.firstChild) {
+                collapseContent.appendChild(cardBody.firstChild);
+            }
+            cardBody.appendChild(toggleButton);
+            cardBody.appendChild(collapseContent);
+
+            toggleButton.addEventListener('click', () => {
+                collapseContent.classList.toggle('show');
+                toggleButton.textContent = collapseContent.classList.contains('show') ? 'Hide Details' : 'Show Details';
+            });
+
+            const backToListButton = document.querySelector('.btn-secondary');
+            backToListButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                backToListButton.classList.add('animate__animated', 'animate__fadeOut');
+                setTimeout(() => {
+                    window.location.href = backToListButton.getAttribute('href');
+                }, 500);
+            });
+        });
+    </script>
+}

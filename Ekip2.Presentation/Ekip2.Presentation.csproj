@@ -1,0 +1,154 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Areas\Admin\Data\**" />
+    <Compile Remove="Areas\Employee\Data\**" />
+    <Compile Remove="Areas\Manager\Data\**" />
+    <Compile Remove="wwwroot\public\**" />
+    <Compile Remove="wwwroot\src\**" />
+    <Content Remove="Areas\Admin\Data\**" />
+    <Content Remove="Areas\Employee\Data\**" />
+    <Content Remove="Areas\Manager\Data\**" />
+    <Content Remove="wwwroot\public\**" />
+    <Content Remove="wwwroot\src\**" />
+    <EmbeddedResource Remove="Areas\Admin\Data\**" />
+    <EmbeddedResource Remove="Areas\Employee\Data\**" />
+    <EmbeddedResource Remove="Areas\Manager\Data\**" />
+    <EmbeddedResource Remove="wwwroot\public\**" />
+    <EmbeddedResource Remove="wwwroot\src\**" />
+    <None Remove="Areas\Admin\Data\**" />
+    <None Remove="Areas\Employee\Data\**" />
+    <None Remove="Areas\Manager\Data\**" />
+    <None Remove="wwwroot\public\**" />
+    <None Remove="wwwroot\src\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ekip2.Application\Ekip2.Application.csproj" />
+    <ProjectReference Include="..\Ekip2.Infrastructure\Ekip2.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\HomePage-Purple\assets\js\custom.js" />
+    <None Include="wwwroot\HomePage-Purple\assets\js\isotope.js" />
+    <None Include="wwwroot\HomePage-Purple\assets\js\isotope.min.js" />
+    <None Include="wwwroot\HomePage-Purple\assets\js\owl-carousel.js" />
+    <None Include="wwwroot\HomePage-Purple\assets\js\popup.js" />
+    <None Include="wwwroot\HomePage-Purple\assets\js\tabs.js" />
+    <None Include="wwwroot\HomePage-Purple\assets\webfonts\fa-brands-400.woff2" />
+    <None Include="wwwroot\HomePage-Purple\assets\webfonts\fa-regular-400.woff2" />
+    <None Include="wwwroot\HomePage-Purple\assets\webfonts\fa-solid-900.woff2" />
+    <None Include="wwwroot\HomePage-Purple\assets\webfonts\fa-v4compatibility.woff2" />
+    <None Include="wwwroot\HomePage-Purple\vendor\bootstrap\js\bootstrap.min.js" />
+    <None Include="wwwroot\HomePage-Purple\vendor\jquery\jquery.js" />
+    <None Include="wwwroot\HomePage-Purple\vendor\jquery\jquery.min.js" />
+    <None Include="wwwroot\HomePage-Purple\vendor\jquery\jquery.min.map" />
+    <None Include="wwwroot\HomePage-Purple\vendor\jquery\jquery.slim.js" />
+    <None Include="wwwroot\HomePage-Purple\vendor\jquery\jquery.slim.min.js" />
+    <None Include="wwwroot\HomePage-Purple\vendor\jquery\jquery.slim.min.map" />
+    <None Include="wwwroot\homepageroot\assets\images\contact\amazon.svg" />
+    <None Include="wwwroot\homepageroot\assets\images\contact\contact-background-layer.svg" />
+    <None Include="wwwroot\homepageroot\assets\images\contact\google.svg" />
+    <None Include="wwwroot\homepageroot\assets\images\contact\microsoft.svg" />
+    <None Include="wwwroot\homepageroot\assets\images\contact\quotes.svg" />
+    <None Include="wwwroot\homepageroot\assets\images\contact\unique.svg" />
+    <None Include="wwwroot\homepageroot\assets\images\faq\faq-backlayer-icons.svg" />
+    <None Include="wwwroot\homepageroot\assets\images\faq\minus.svg" />
+    <None Include="wwwroot\homepageroot\assets\images\faq\plus.svg" />
+    <None Include="wwwroot\homepageroot\assets\images\footer\Logo.svg" />
+    <None Include="wwwroot\homepageroot\assets\images\hero\leftside-backlayer-icons.svg" />
+    <None Include="wwwroot\homepageroot\assets\images\hero\right-background.svg" />
+    <None Include="wwwroot\homepageroot\assets\images\hero\right-image.svg" />
+    <None Include="wwwroot\homepageroot\assets\images\hero\rightside-backlayer-icons.svg" />
+    <None Include="wwwroot\homepageroot\assets\images\our-service\our-service-background.svg" />
+    <None Include="wwwroot\homepageroot\assets\images\our-service\our-service.svg" />
+    <None Include="wwwroot\homepageroot\assets\images\portfolio\portfolio-backoverlay.svg" />
+    <None Include="wwwroot\homepageroot\assets\images\price-plans\left-shape.svg" />
+    <None Include="wwwroot\homepageroot\assets\images\price-plans\price-arrow.svg" />
+    <None Include="wwwroot\homepageroot\assets\images\price-plans\price-overlay.svg" />
+    <None Include="wwwroot\homepageroot\assets\images\price-plans\price-plan-background-icons.svg" />
+    <None Include="wwwroot\homepageroot\assets\images\price-plans\right-shape.svg" />
+    <None Include="wwwroot\homepageroot\assets\images\sasscandy-logo.svg" />
+    <None Include="wwwroot\homepageroot\assets\images\service\service-backlayer.svg" />
+    <None Include="wwwroot\homepageroot\assets\images\service\service-round-icon-layer.svg" />
+    <None Include="wwwroot\homepageroot\assets\images\service\step1-icon.svg" />
+    <None Include="wwwroot\homepageroot\assets\images\service\step2-icon.svg" />
+    <None Include="wwwroot\homepageroot\assets\images\service\step3-icon.svg" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\.gitattributes" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\.gitignore" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\.travis.yml" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\CONTRIBUTING.md" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\dist\LICENSE" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\dist\owl.carousel.min.js" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\dist\README.md" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\Gruntfile.js" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\ISSUE_TEMPLATE.md" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\LICENSE" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\README.md" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\ROADMAP.md" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\css\owl.carousel.css.map" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\css\owl.theme.default.css.map" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\css\owl.theme.green.css.map" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\dist\css\owl.carousel.css.map" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\dist\css\owl.theme.default.css.map" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\dist\css\owl.theme.green.css.map" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\js\.jscsrc" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\js\.jshintrc" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\js\owl.animate.js" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\js\owl.autoheight.js" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\js\owl.autoplay.js" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\js\owl.autorefresh.js" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\js\owl.carousel.js" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\js\owl.hash.js" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\js\owl.lazyload.js" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\js\owl.navigation.js" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\js\owl.support.js" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\js\owl.support.modernizr.js" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\js\owl.video.js" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\scss\owl.carousel.css.map" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\scss\owl.carousel.scss" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\scss\owl.theme.default.css.map" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\scss\owl.theme.default.scss" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\scss\owl.theme.green.css.map" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\scss\owl.theme.green.scss" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\scss\_animate.scss" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\scss\_autoheight.scss" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\scss\_core.scss" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\scss\_lazyload.scss" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\scss\_theme.default.scss" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\scss\_theme.green.scss" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\scss\_theme.scss" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\src\scss\_video.scss" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\test\unit\autoplay.js" />
+    <None Include="wwwroot\homepageroot\assets\libs\OwlCarousel-2\test\unit\core.js" />
+    <None Include="wwwroot\homepageroot\dist\css\iconfont\fonts\tabler-icons.svg" />
+    <None Include="wwwroot\homepageroot\dist\css\iconfont\fonts\tabler-icons.woff2" />
+    <None Include="wwwroot\homepageroot\dist\css\style.css.map" />
+    <None Include="wwwroot\homepageroot\dist\js\bootstrap.min.js" />
+    <None Include="wwwroot\homepageroot\dist\js\custom.js" />
+    <None Include="wwwroot\homepageroot\dist\js\jquery.min.js" />
+    <None Include="wwwroot\js\site.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AspNetCoreHero.ToastNotification" Version="1.1.0" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+    <PackageReference Include="Hangfire" Version="1.8.14" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.8.14" />
+    <PackageReference Include="Hangfire.SqlServer" Version="1.8.14" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.20">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.12" />
+  </ItemGroup>
+
+ 
+
+</Project>

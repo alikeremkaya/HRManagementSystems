@@ -1,0 +1,273 @@
+﻿@model IEnumerable<Ekip2.Presentation.Areas.Manager.Models.SalaryLogVMs.SalaryLogListVM>
+
+@{
+    ViewData["Title"] = "Salary Logs Table";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="tabs">
+    <ul>
+        <li><a href="javascript:void(0);" class="back-button" onclick="goBack()">&#8592;</a></li>
+    </ul>
+</div>
+<h1 class="page-title">@Localizer["SalaryLogs"]</h1>
+<div id="contentArea">
+    <div id="salaryLogs" class="tab-content">
+        <div class="table-responsive">
+            <table id="salaryLogsTable" class="table">
+                <thead>
+                    <tr>
+                        <th>@Localizer["EmployeeName"]</th>
+                        <th>@Localizer["Amount"]</th>
+                        <th>@Localizer["SalaryDate"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.EmployeeName)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Amount)</td>
+                            <td>@Html.DisplayFor(modelItem => item.SalaryDate)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#salariesTable').DataTable({
+            "paging": true,
+            "ordering": true,
+            "info": true,
+            "searching": true,
+            language: {
+                lengthMenu: "@Localizer["Show"] _MENU_ @Localizer["entries"]",
+                search: "@Localizer["Search"]:",
+                paginate: {
+                    next: "@Localizer["Next"]",
+                    previous: "@Localizer["Previous"]"
+                }
+            }
+        });
+    });
+    function showTab(tabId) {
+        const contents = document.querySelectorAll('.tab-content');
+        contents.forEach(content => content.style.display = 'none');
+        document.getElementById(tabId).style.display = 'block';
+    }
+    function goBack() {
+        window.history.back();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        showTab('salaryLogs');
+
+        $('#salaryLogsTable').DataTable();
+    });
+</script>
+
+<style>
+    .modal-body {
+        padding: 30px;
+        text-align: center;
+    }
+
+    .modal-content {
+        background-color: #fff;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 500px;
+        border-radius: 8px;
+    }
+
+    .modal-header {
+        background-color: #fff;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .table-responsive {
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        background-color: white;
+    }
+
+    .tabs {
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        position: relative;
+    }
+
+    .tabs ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        justify-content: flex-end;
+        flex: 1;
+    }
+
+    .tabs ul li {
+        margin-right: 10px;
+    }
+
+    .tabs ul li a {
+        text-decoration: none;
+        padding: 10px 20px;
+        display: block;
+        color: #7978E9;
+        font-weight: bold;
+        transition: background-color 0.3s ease, color 0.3s ease;
+        border: 2px solid transparent;
+        border-radius: 5px;
+        font-size: 1.2em;
+    }
+
+    .tabs ul li a:hover,
+    .tabs ul li a.active {
+        color: white;
+        background-color: #7978E9;
+        border-color: #7978E9;
+    }
+
+    .back-button {
+        position: absolute;
+        left: 0;
+        top: -20px;
+        margin: 20px;
+        text-decoration: none;
+        padding: 10px 20px;
+        display: block;
+        color: #7978E9;
+        font-weight: bold;
+        transition: background-color 0.3s ease, color 0.3s ease;
+        border: 2px solid transparent;
+        border-radius: 5px;
+        font-size: 1.2em;
+    }
+
+    .back-button:hover {
+        color: white;
+        background-color: #5c5ab3;
+        border-color: #5c5ab3;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .table th,
+    .table td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+    }
+
+    .table thead th {
+        background-color: #7978E9;
+        color: white;
+        border-bottom: 2px solid #7978E9;
+    }
+
+    body {
+        background: #F5F7FF;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .page-title {
+        color: #7978E9;
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 2em;
+    }
+
+    .btn-create {
+        text-decoration: none;
+        color: white;
+        font-weight: bold;
+        background-color: #7978E9;
+        padding: 10px 20px;
+        border-radius: 25px;
+        display: inline-block;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-create:hover {
+        background-color: #5c5ab3;
+    }
+
+    .btn-info {
+        background-color: #7978E9;
+        border-color: #7978E9;
+        color: white;
+    }
+
+    .btn-info:hover {
+        background-color: #5c5ab3;
+        border-color: #5c5ab3;
+    }
+
+    .btn-delete-direct:hover {
+        background-color: #e67350;
+    }
+
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter {
+        margin-bottom: 20px;
+    }
+
+        .dataTables_wrapper .dataTables_length label,
+        .dataTables_wrapper .dataTables_filter label {
+            color: #7978E9;
+            font-weight: bold;
+        }
+
+        .dataTables_wrapper .dataTables_length select,
+        .dataTables_wrapper .dataTables_filter input {
+            color: #7978E9;
+            border: 1px solid #7978E9;
+            border-radius: 5px;
+            padding: 5px;
+        }
+
+        .dataTables_wrapper .dataTables_length select {
+            height: 25px;
+            margin-top: 5px;
+            margin-left: 10px;
+        }
+
+        .dataTables_wrapper .dataTables_filter input {
+            width: 150px !important;
+            height: 30px !important;
+            padding: 5px;
+            font-size: 14px;
+            margin-top: 10px;
+            margin-right: 10px;
+            border: 1px solid #7978E9;
+            background-color: #f5f5f5;
+        }
+
+            .dataTables_wrapper .dataTables_filter input:focus {
+                background-color: #e0e0e0;
+                outline: none;
+                border-color: #7978E9;
+            }
+</style>

@@ -1,0 +1,451 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>HR Management System</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="~/vendors/feather/feather.css">
+    <link rel="stylesheet" href="~/vendors/ti-icons/css/themify-icons.css">
+    <link rel="stylesheet" href="~/vendors/css/vendor.bundle.base.css">
+    <!-- endinject -->
+    <!-- Plugin css for this page -->
+    <link rel="stylesheet" href="~/vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+    <link rel="stylesheet" href="~/vendors/ti-icons/css/themify-icons.css">
+    <link rel="stylesheet" type="~/text/css" href="js/select.dataTables.min.css">
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="~/css/vertical-layout-light/style.css">
+    <!-- endinject -->
+    <link rel="shortcut icon" href="~/images/favicon.png" />
+    <style>
+        .nav-link:hover {
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+
+
+
+
+    <div class="container-scroller">
+        <!-- partial:partials/_navbar.html -->
+        <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+            <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+                <a class="navbar-brand brand-logo mr-5"><img src="~/images/logo-mini.svg" class="mr-2" />SEA~O</a>
+                <a class="navbar-brand brand-logo-mini"><img src="~/images/logo-mini.svg" alt="logo" /></a>
+            </div>
+            <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+                <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+                    <span class="icon-menu"></span>
+                </button>
+                <ul class="navbar-nav mr-lg-2">
+                </ul>
+                <ul class="navbar-nav navbar-nav-right">
+                    @if (User.IsInRole("Manager") || User.IsInRole("Employee"))
+                    {
+                        <li class="nav-item">
+                            @await Component.InvokeAsync("CompanyName")
+                        </li>
+                    }
+                    <li class="nav-item nav-profile dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
+                            <img src="~/images/down-arrow (1).png" alt="profile" />
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+                            @* <a class="dropdown-item">
+                            <i class="ti-settings text-primary"></i>
+                            Settings
+                            </a> *@
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-item language-dropdown">
+                                <i class="ti-world text-primary"></i>
+                                <span class="menu-title"></span>
+                                <select class="menu-title" id="selectLanguage" class="form-control mt-2" onclick="event.stopPropagation()">
+                                    <option value="">@Localizer["Language"]</option>
+                                    <option value="tr">@Localizer["TR"]</option>
+                                    <option value="en">@Localizer["EN"]</option>
+                                </select>
+                            </div>
+
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <a class="dropdown-item d-flex align-items-center" href="javascript:void(0);" id="openAdminProfileModal">
+                                    <i class="bi bi-person"></i>
+                                    <span>@Localizer["My Profile"]</span>
+                                </a>
+                            }
+                            else if (User.IsInRole("Manager"))
+                            {
+
+                                <a class="dropdown-item d-flex align-items-center" href="javascript:void(0);" id="openProfileModal">
+                                    <i class="bi bi-person"></i>
+                                    <span>@Localizer["My Profile"]</span>
+                                </a>
+
+                            }
+                            else if (User.IsInRole("Employee"))
+                            {
+                                <a class="dropdown-item d-flex align-items-center" href="javascript:void(0);" id="openEmployeeProfileModal">
+                                    <i class="bi bi-person"></i>
+                                    <span>@Localizer["My Profile"]</span>
+                                </a>
+                            }
+                            <a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="Logout">
+                                <i class="ti-power-off text-primary"></i>
+                                @Localizer["Logout"]
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+                <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+                    <span class="icon-menu"></span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:partials/_settings-panel.html -->
+            <div class="theme-setting-wrapper">
+                <div id="settings-trigger"><i class="ti-settings"></i></div>
+                <div id="theme-settings" class="settings-panel">
+                    <i class="settings-close ti-close"></i>
+                    <p class="settings-heading">SIDEBAR SKINS</p>
+                    <div class="sidebar-bg-options selected" id="sidebar-light-theme"><div class="img-ss rounded-circle bg-light border mr-3"></div>Light</div>
+                    <div class="sidebar-bg-options" id="sidebar-dark-theme"><div class="img-ss rounded-circle bg-dark border mr-3"></div>Dark</div>
+                    <p class="settings-heading mt-2">HEADER SKINS</p>
+                    <div class="color-tiles mx-0 px-4">
+                        <div class="tiles successtiles success"></div>
+                        <div class="tiles warning"></div>
+                        <div class="tiles danger"></div>
+                        <div class="tiles info"></div>
+                        <div class="tiles dark"></div>
+                        <div class="tiles default"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="right-sidebar" class="settings-panel">
+                <i class="settings-close ti-close"></i>
+                <ul class="nav nav-tabs border-top" id="setting-panel" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="todo-tab" data-toggle="tab" href="#todo-section" role="tab" aria-controls="todo-section" aria-expanded="true">TO DO LIST</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="chats-tab" data-toggle="tab" href="#chats-section" role="tab" aria-controls="chats-section">CHATS</a>
+                    </li>
+                </ul>
+
+            </div>
+
+            <!-- partial -->
+            <!-- partial:partials/_sidebar.html -->
+            <nav class="sidebar " id="sidebar" style="background-color: white">
+                <ul class="nav">
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Admin" asp-controller="Home" asp-action="Index">
+                                <i class="icon-paper menu-icon"></i><span class="menu-title">@Localizer["Dashboard"]</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Admin" asp-controller="Company" asp-action="Index">
+                                <i class="icon-paper menu-icon"></i><span class="menu-title">@Localizer["Company"]</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Admin" asp-controller="Manager" asp-action="Index">
+                                <i class="icon-paper menu-icon"></i><span class="menu-title">@Localizer["Manager"]</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Admin" asp-controller="Package" asp-action="Index">
+                                <i class="icon-paper menu-icon"></i><span class="menu-title">@Localizer["Package"]</span>
+                            </a>
+                        </li>
+
+                    }
+                    else if (User.IsInRole("Manager"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Manager" asp-controller="Home" asp-action="Index">
+                                <i class="icon-paper menu-icon"></i><span class="menu-title">@Localizer["Dashboard"]</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Manager" asp-controller="Employee" asp-action="Index">
+                                <i class="icon-paper menu-icon"></i><span class="menu-title">@Localizer["Employee"]</span>
+                            </a>
+                        </li>
+
+
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Manager" asp-controller="LeaveType" asp-action="Index">
+                                <i class="icon-paper menu-icon"></i><span class="menu-title">@Localizer["LeaveType"]</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
+                                <i class="icon-paper menu-icon"></i>
+                                <span class="menu-title">@Localizer["Requests"]</span>
+                                <i class="menu-arrow"></i>
+                            </a>
+                            <div class="collapse" id="auth">
+                                <ul class="nav flex-column sub-menu">
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-area="Manager" asp-controller="Leave" asp-action="Index">
+                                            <i class=" "></i><span class="menu-title">@Localizer["Leave"]</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-area="Manager" asp-controller="Advance" asp-action="Index">
+                                            <i class=""></i><span class="menu-title">@Localizer["Advance"]</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-area="Manager" asp-controller="Expense" asp-action="Index">
+                                            <i class=""></i><span class="menu-title">@Localizer["Expense"]</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Manager" asp-controller="Package" asp-action="Index">
+                                <i class="icon-paper menu-icon"></i><span class="menu-title">@Localizer["Packages"]</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Manager" asp-controller="Salary" asp-action="Index">
+                                <i class="icon-paper menu-icon"></i><span class="menu-title">@Localizer["Salary"]</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Manager" asp-controller="Salary" asp-action="Logs">
+                                <i class="icon-paper menu-icon"></i><span class="menu-title">@Localizer["SalaryLog"]</span>
+                            </a>
+                        </li>
+                    }
+                    else if (User.IsInRole("Employee"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
+                                <i class="icon-head menu-icon"></i>
+                                <span class="menu-title">Request</span>
+                                <i class="menu-arrow"></i>
+                            </a>
+                            <div class="collapse" id="auth">
+                                <ul class="nav flex-column sub-menu">
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-area="Employee" asp-controller="Leave" asp-action="Index">
+                                            <i class="icon-paper menu-icon"></i><span class="menu-title">@Localizer["Leave"]</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-area="Employee" asp-controller="Advance" asp-action="Index">
+                                            <i class="icon-paper menu-icon"></i><span class="menu-title">@Localizer["Advance"]</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-area="Employee" asp-controller="Expense" asp-action="Index">
+                                            <i class="icon-paper menu-icon"></i><span class="menu-title">@Localizer["Expense"]</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </nav>
+            <div class="modal fade" id="profileModal3" tabindex="-1" aria-labelledby="profileModalLabel3" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="profileModalLabel3">Profile</h5>
+
+                        </div>
+                        <div class="modal-body" id="profileModalBody3">
+                            <!-- Profil içeriği buraya yüklenecek -->
+                        </div>
+                        <div class="modal-footer">
+                            <button id="ProfileAdminClose" class="custom-btn btn-profile" data-dismiss="modal">@Localizer["Close"]</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                document.getElementById("openAdminProfileModal").addEventListener("click", function () {
+                    fetch('@Url.Action("Profile", "AdminAccount", new { area = "Admin" })')
+                        .then(response => response.text())
+                        .then(html => {
+                            document.getElementById("profileModalBody3").innerHTML = html;
+                            var modalElement = new bootstrap.Modal(document.getElementById("profileModal3"));
+                            modalElement.show();
+                        })
+                        .catch(error => console.error('Error loading profile:', error));
+                });
+            </script>
+
+            </nav>
+            <div class="modal fade" id="profileModal2" tabindex="-1" aria-labelledby="profileModalLabel2" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="profileModalLabel2">Profile</h5>
+
+                        </div>
+                        <div class="modal-body" id="profileModalBody2">
+                            <!-- Profil içeriği buraya yüklenecek -->
+                        </div>
+                        <div class="modal-footer">
+                            <button id="ProfileClose" class="custom-btn btn-profile" data-dismiss="modal">@Localizer["Close"]</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                document.getElementById("openEmployeeProfileModal").addEventListener("click", function () {
+                    fetch('@Url.Action("Profile", "EmployeeAccount", new { area = "Employee" })')
+                        .then(response => response.text())
+                        .then(html => {
+                            document.getElementById("profileModalBody2").innerHTML = html;
+                            var modalElement = new bootstrap.Modal(document.getElementById("profileModal2"));
+                            modalElement.show();
+                        })
+                        .catch(error => console.error('Error loading profile:', error));
+                });
+            </script>
+
+
+            <!-- Modal -->
+            <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="profileModalLabel">Profile</h5>
+
+                        </div>
+                        <div class="modal-body" id="profileModalBody">
+                            <!-- Profil içeriği buraya yüklenecek -->
+                        </div>
+                        <div class="modal-footer">
+                            <button id="ProfileManagerClose" class="custom-btn btn-profile" data-dismiss="modal">@Localizer["Close"]</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                document.getElementById("openProfileModal").addEventListener("click", function () {
+                    fetch('@Url.Action("Profile", "ManagerAccount", new { area = "Manager" })')
+                        .then(response => response.text())
+                        .then(html => {
+                            document.getElementById("profileModalBody").innerHTML = html;
+                            var modalElement = new bootstrap.Modal(document.getElementById("profileModal"));
+                            modalElement.show();
+                        })
+                        .catch(error => console.error('Error loading profile:', error));
+                });
+            </script>
+
+            <!-- Gerekli CSS ve JS dosyalarını ekleyin -->
+            @section Styles {
+
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+                <link rel="stylesheet" href="~/https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+                <link rel="stylesheet" href="~/css/site.css">
+
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css" />
+
+            }
+
+            @section Scripts {
+
+                <script src="~/https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+                <script src="~/https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js"></script>
+
+                <script src="~/https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
+
+                <script src="~/https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+            }
+            <!-- partial -->
+            <div class="main-panel">
+                @RenderBody()
+
+                <!-- content-wrapper ends -->
+                <!-- partial:partials/_footer.html -->
+                @* <footer class="footer">
+                <div class="d-sm-flex justify-content-center justify-content-sm-between">
+                <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2021.  Premium <a href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a> from BootstrapDash. All rights reserved.</span>
+                <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i class="ti-heart text-danger ml-1"></i></span>
+                </div>
+                <div class="d-sm-flex justify-content-center justify-content-sm-between">
+                <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Distributed by <a href="https://www.themewagon.com/" target="_blank">Themewagon</a></span>
+                </div>
+                </footer> *@
+                <!-- partial -->
+            </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+
+    </div>
+    <!-- container-scroller -->
+    <!-- Profil modal container -->
+    <!-- plugins:js -->
+    <script src="~/vendors/js/vendor.bundle.base.js"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page -->
+    <script src="~/vendors/chart.js/Chart.min.js"></script>
+    <script src="~/vendors/datatables.net/jquery.dataTables.js"></script>
+    <script src="~/vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
+    <script src="~/js/dataTables.select.min.js"></script>
+
+
+
+    <script>
+        document.getElementById('selectLanguage').addEventListener('change', function () {
+            var selectedCulture = this.value;
+            document.cookie = ".AspNetCore.Culture=c=" + selectedCulture + "|uic=" + selectedCulture + ";path=/";
+            location.reload();
+        })
+    </script>
+
+
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <script src="~/js/off-canvas.js"></script>
+    <script src="~/js/hoverable-collapse.js"></script>
+    <script src="~/js/template.js"></script>
+    <script src="~/js/settings.js"></script>
+    <script src="~/js/todolist.js"></script>
+    <!-- endinject -->
+    <!-- Custom js for this page-->
+    <script src="~/js/dashboard.js"></script>
+    <script src="~/js/Chart.roundedBarCharts.js"></script>
+    <!-- End custom js for this page-->
+    @await RenderSectionAsync("Scripts", required: false);
+    @await RenderSectionAsync("Styles", required: false);
+
+
+</body>
+
+</html>

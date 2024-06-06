@@ -1,0 +1,8 @@
+﻿namespace Ekip2.Presentation.Areas.Manager.Models.LeaveTypeVMs
+{
+    public class LeaveTypeCreateVM
+    {
+        public string Type { get; set; }
+        public string Description { get; set; }
+    }
+}

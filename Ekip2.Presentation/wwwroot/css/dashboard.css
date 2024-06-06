@@ -1,0 +1,234 @@
+﻿.main-panel {
+    background-color: #F5F7FF;
+}
+
+.same-height {
+    height: 150px;
+}
+
+.digital-clock {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+}
+
+.date {
+    font-size: 1.2em;
+    text-align: center;
+    color: white;
+}
+
+.stretch-card > .card {
+    width: 100%;
+    min-width: 100%;
+}
+
+.card-dark-blue {
+    background-color: #4B79A1;
+    color: #fff;
+}
+
+.card-light-blue {
+    background-color: #8E24AA;
+    color: #fff;
+}
+
+.card-light-danger {
+    background-color: #FF7043;
+    color: #fff;
+}
+
+.card-body p {
+    margin: 0;
+}
+
+.report-table td,
+.report-table th {
+    padding: .75rem;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+}
+
+.table-borderless th,
+.table-borderless td,
+.table-borderless thead th,
+.table-borderless tbody + tbody {
+    border: 0;
+}
+
+.table-responsive {
+    overflow-y: auto;
+    height: 300px;
+}
+
+.status-pending {
+    display: inline-block;
+    padding: 2px 5px;
+    border-radius: 10px;
+    border: 1px solid yellow;
+    background-color: white;
+    color: yellow;
+    font-weight: bold;
+}
+
+.status-approved {
+    display: inline-block;
+    padding: 2px 5px;
+    border-radius: 10px;
+    border: 1px solid green;
+    background-color: #white;
+    color: green;
+    font-weight: bold;
+}
+
+.modal-body {
+    padding: 30px;
+    text-align: center;
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 8px;
+}
+
+.modal-header {
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+}
+
+.status-rejected {
+    display: inline-block;
+    padding: 2px 5px;
+    border-radius: 10px;
+    border: 1px solid red;
+    background-color: #white;
+    color: red;
+    font-weight: bold;
+}
+
+.card {
+    background-color: #f0f4f8;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.card-body {
+    text-align: center;
+}
+
+    .card-body img {
+        width: 50px;
+        height: 50px;
+    }
+/* Genel uygulama stili */
+.app {
+    font-family: Arial, sans-serif;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background: #f5f5f5;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin: auto;
+}
+
+/* Başlık stili */
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+    .header h1 {
+        font-size: 24px;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+/* Arama çubuğu stili */
+#searchBar {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+/* İçerik stili */
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.city {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: black;
+}
+
+.temp {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #ff5722;
+}
+
+.desc {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: black;
+}
+
+.minmax {
+    font-size: 16px;
+    color: black;
+}
+
+/* İsteğe bağlı: Aşağıdaki stil hava durumu ikonları için kullanılabilir */
+.weather-icon {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 10px;
+}
+.card {
+    border: 1px solid;
+    border-radius: 8px;
+    max-width: 600px; /* Kart genişliğini ayarlıyoruz */
+    margin: 0 auto; /* Kartı ortalamak için */
+}
+
+.card-body {
+    padding: 1rem; /* İç boşluğu küçültüyoruz */
+}
+
+.card-title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+canvas {
+    max-height: 300px; /* Grafik yüksekliğini ayarlıyoruz */
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.animated-heading {
+    animation: fadeIn 2s ease-in-out;
+}

@@ -1,0 +1,546 @@
+﻿@model IEnumerable<Ekip2.Presentation.Areas.Manager.Models.EmployeeVMs.EmployeeListVM>
+@inject IManagerService _managerService;
+@inject ILeaveService _leaveService;
+
+@using System.Security.Claims
+@using Ekip2.Application.Services.LeaveService
+@{
+    ViewData["Title"] = "Employees";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var loginManager = await _managerService.GetByIdentityUserIdAsync(userId);
+}
+
+
+
+<!-- DataTables CSS ve JS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="page-title">@Localizer["Employees"]</h1>
+        <button class="btn btn-create" data-toggle="modal" data-target="#createEmployeeModal">@Localizer["Add"]</button>
+
+    </div>
+
+    <div class="card-container row">
+        @foreach (var (item, index) in Model.Select((value, i) => (value, i + 1)))
+        {
+            <div class="col-md-3 mb-4">
+                <div class="card h-100 card-animated" onmouseover="showDropdown(this)" onmouseout="hideDropdown(this)">
+                    <div class="dropdown position-relative">
+                        <button class="btn btn-custom-dropdown btn-xs" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            &nbsp;
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-custom">
+                            <a class="dropdown-item dropdown-item-details btn-xs"
+                               href="@Url.Action("Index", "Summary", new { employeeId = item.Id })">
+                                @Localizer["Details"]
+                            </a>
+                            <a type="button" class="dropdown-item dropdown-item-update btn-xs" data-toggle="modal" data-target="#updateEmployeeModal" data-id="@item.Id">
+                                @Localizer["Update"]
+                            </a>
+                            <a type="button" class="dropdown-item dropdown-item-delete btn-xs" data-id="@item.Id">
+                                @Localizer["Delete"]
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body position-relative">
+                        <div class="image-container">
+                            @if (item.Image == null)
+                            {
+                                <p class="image-placeholder">@Localizer["NoImagePleaseAdd"]</p>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("Index", "Summary", new { employeeId = item.Id })">
+                                    <img class="image-preview" src="@($"data:image/png;base64,{Convert.ToBase64String(item.Image)}")" onclick="openModal(this.src)" />
+                                </a>
+                            }
+                        </div>
+                        <h5 class="card-title">@item.FirstName @item.LastName</h5>
+                        <p class="card-text">@Localizer["Email"]: @item.Email</p>
+                        <p class="card-text">@Localizer["PhoneNumber"]: @item.PhoneNumber</p>
+                        <p class="card-text">@Localizer["Company"]: @item.CompanyName</p>
+                        <p class="card-text">@Localizer["Role"]: @item.Roles</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Create Modal -->
+<div class="modal fade" id="createEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="createEmployeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createEmployeeModalLabel"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="createModalContent"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Update Modal -->
+<div class="modal fade" id="updateEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="updateEmployeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateEmployeeModalLabel"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="updateModalContent"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function () {
+            $('#createEmployeeModal').on('show.bs.modal', function () {
+                var url = '@Url.Action("Create", "Employee")';
+                $('#createModalContent').load(url);
+            });
+
+            $('#updateEmployeeModal').on('show.bs.modal', function (e) {
+                var button = $(e.relatedTarget);
+                var id = button.data('id');
+                var url = '@Url.Action("Update", "Employee")/' + id;
+                $('#updateModalContent').load(url);
+            });
+        });
+
+        $('.dropdown-item-delete').click(function () {
+            var id = $(this).data('id');
+            swal({
+                title: "@Localizer["DeleteConfirmation"]",
+                text: "@Localizer["DeleteConfirmationText"]",
+                icon: "warning",
+                buttons: {
+                    cancel: {
+                        text: "@Localizer["No"]",
+                        visible: true,
+                        className: "btn btn-secondary",
+                        closeModal: true
+                    },
+                    confirm: {
+                        text: "@Localizer["Yes"]",
+                        className: "btn btn-danger",
+                        closeModal: false
+                    }
+                }
+            }).then((isConfirm) => {
+                if (isConfirm) {
+                    $.ajax({
+                        url: '@Url.Action("Delete", "Employee", new { area = "Manager" })',
+                        type: 'POST',
+                        data: { id: id },
+                        success: function (response) {
+                            swal({
+                                title: "@Localizer["Deleted"]",
+                                text: "@Localizer["DeleteSuccessText"]",
+                                icon: "success"
+                            }).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function () {
+                            swal("@Localizer["Error"]", "@Localizer["DeleteErrorText"]", "error");
+                        }
+                    });
+                } else {
+                    swal.close();
+                }
+            });
+        });
+
+        function showDropdown(element) {
+            $(element).find('.dropdown-menu').addClass('show');
+        }
+
+        function hideDropdown(element) {
+            $(element).find('.dropdown-menu').removeClass('show');
+        }
+    </script>
+}
+
+
+<style>
+    .btn-custom-dropdown {
+        padding: 0.1rem 0.2rem;
+        font-size: 0.6rem;
+        line-height: 1;
+        border-radius: 8px 0 0 0;
+        background-color: #4a4a4a;
+        color: #fff;
+        border: none;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+        .btn-custom-dropdown:hover {
+            background-color: #333;
+        }
+
+    .dropdown-menu-custom {
+        position: absolute;
+        left: 0;
+        right: auto;
+        top: 0;
+        min-width: 100px;
+        padding: 0.2rem 0;
+        font-size: 0.75rem;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        background-clip: padding-box;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
+        z-index: 1050;
+    }
+
+    .dropdown-item {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.75rem;
+        white-space: nowrap;
+        color: #333;
+        cursor: pointer;
+    }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+    .dropdown-item-details {
+        color: #rgba;
+        font-weight: bold;
+    }
+
+        .dropdown-item-details:hover {
+            background-color: #rgba;
+        }
+
+    .dropdown-item-update {
+        color: #rgba;
+        font-weight: bold;
+    }
+
+        .dropdown-item-update:hover {
+            background-color: #d4edda;
+        }
+
+    .dropdown-item-delete {
+        color: #rgba;
+        font-weight: bold;
+    }
+
+        .dropdown-item-delete:hover {
+            background-color: #f8d7da;
+        }
+
+    .btn-custom-dropdown .fas.fa-chevron-down {
+        font-size: 0.7rem;
+        vertical-align: middle;
+    }
+
+    body {
+        background: #F5F7FF;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .page-title {
+        color: #7978E9;
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 2em;
+    }
+
+    .btn-create {
+        text-decoration: none;
+        color: white;
+        font-weight: bold;
+        background-color: #7978E9;
+        padding: 8px 15px;
+        border-radius: 15px;
+        display: inline-block;
+        transition: background-color 0.2s ease;
+        font-size: 0.9em;
+        width: 130px;
+        text-align: center;
+    }
+
+        .btn-create:hover {
+            background-color: #5a5aee;
+        }
+
+    .card-container {
+        margin-top: 20px;
+    }
+
+    .card-animated {
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s ease-out;
+    }
+
+        .card-animated:hover {
+            transform: translateY(-5px);
+        }
+
+    .image-container {
+        height: 200px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        background-color: #f9f9f9;
+    }
+
+    .modal-body {
+        padding: 30px;
+        text-align: center;
+    }
+
+    .modal-content {
+        background-color: #fff;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 500px;
+        border-radius: 8px;
+    }
+
+    .modal-header {
+        background-color: #fff;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .image-preview {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: cover;
+        cursor: pointer;
+    }
+
+    .image-placeholder {
+        color: #aaa;
+        font-size: 0.9em;
+        text-align: center;
+    }
+
+    .card-footer {
+        background-color: #f9f9f9;
+        border-top: 1px solid #ddd;
+    }
+
+    .action-links {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .btn-update,
+    .btn-delete {
+        text-decoration: none;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        display: inline-block;
+        transition: background-color 0.3s ease;
+        cursor: pointer;
+    }
+
+    .btn-update {
+        background-color: #7978E9;
+        border: 1px solid #7978E9;
+    }
+
+        .btn-update:hover {
+            background-color: #5a5aee;
+        }
+
+    .btn-delete {
+        background-color: #dc3545;
+        border: 1px solid #dc3545;
+    }
+
+        .btn-delete:hover {
+            background-color: #rgba;
+        }
+
+    .modal-header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #fff;
+        border-bottom: 1px solid #ddd;
+    }
+
+        .modal-header .close {
+            font-size: 1.5rem;
+            color: #c0c5cb;
+            opacity: 1;
+            position: absolute;
+            right: 15px;
+            top: 15px;
+        }
+
+    .modal-title {
+        color: #7978E9;
+        font-size: 1.25rem;
+        margin: 0;
+    }
+
+    .modal-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 30px;
+        text-align: center;
+    }
+
+        .modal-body img {
+            width: 82px;
+            margin-bottom: 15px;
+        }
+
+        .modal-body p {
+            margin-bottom: 30px;
+            font-size: 18px;
+            color: #000;
+        }
+
+    body {
+        font-family: 'Varela Round', sans-serif;
+    }
+
+    .modal-confirm {
+        color: #636363;
+        width: 400px;
+        margin: 30px auto;
+    }
+
+        .modal-confirm .modal-content {
+            padding: 20px;
+            border-radius: 5px;
+            border: none;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .modal-confirm .modal-header {
+            border-bottom: none;
+            position: relative;
+        }
+
+        .modal-confirm h4 {
+            text-align: center;
+            font-size: 26px;
+            margin: 30px 0 -10px;
+        }
+
+        .modal-confirm .close {
+            position: absolute;
+            top: -5px;
+            right: -2px;
+        }
+
+        .modal-confirm .modal-body {
+            color: #999;
+        }
+
+        .modal-confirm .modal-footer {
+            border: none;
+            text-align: center;
+            border-radius: 5px;
+            font-size: 13px;
+            padding: 10px 15px 25px;
+        }
+
+            .modal-confirm .modal-footer a {
+                color: #999;
+            }
+
+        .modal-confirm .icon-box {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto;
+            border-radius: 50%;
+            z-index: 9;
+            text-align: center;
+            border: 3px solid #f15e5e;
+        }
+
+            .modal-confirm .icon-box i {
+                color: #f15e5e;
+                font-size: 46px;
+                display: inline-block;
+                margin-top: 13px;
+            }
+
+        .modal-confirm .btn {
+            color: #fff;
+            border-radius: 4px;
+            background: #60c7c1;
+            text-decoration: none;
+            transition: all 0.4s;
+            line-height: normal;
+            min-width: 120px;
+            border: none;
+            min-height: 40px;
+            border-radius: 3px;
+            margin: 0 5px;
+            outline: none !important;
+        }
+
+        .modal-confirm .btn-info {
+            background: #c1c1c1;
+        }
+
+            .modal-confirm .btn-info:hover,
+            .modal-confirm .btn-info:focus {
+                background: #a8a8a8;
+            }
+
+        .modal-confirm .btn-danger {
+            background: #f15e5e;
+        }
+
+            .modal-confirm .btn-danger:hover,
+            .modal-confirm .btn-danger:focus {
+                background: #ee3535;
+            }
+
+    .trigger-btn {
+        display: inline-block;
+        margin: 100px auto;
+    }
+</style>
+

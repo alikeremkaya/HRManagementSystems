@@ -1,0 +1,352 @@
+﻿@model Ekip2.Presentation.Areas.Manager.Models.SummaryVMs.SummaryViewModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="tabs">
+    <ul>
+        <li><a href="javascript:void(0);" class="back-button" onclick="goBack()">&#8592;</a></li>
+        <li><a href="#" class="tab-link active" onclick="showTab('advances')">Advances</a></li>
+        <li><a href="#" class="tab-link" onclick="showTab('expenses')">Expenses</a></li>
+        <li><a href="#" class="tab-link" onclick="showTab('leaves')">Leaves</a></li>
+    </ul>
+</div>
+
+<div id="contentArea">
+    <div id="advances" class="tab-content">
+        <div class="table-responsive">
+            <table id="advancesTable" class="table">
+                <thead>
+                    <tr>
+                        <th>@Localizer["Image"]</th>
+                        <th>@Localizer["EmployeeName"]</th>
+                        <th>@Localizer["Amount"]</th>
+                        <th>@Localizer["AdvanceDate"]</th>
+                        <th>@Localizer["RequestStatus"]</th>
+                        <th>@Localizer["Roles"]</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var advance in Model.Advances)
+                    {
+                        <tr>
+                            <td>
+                                @if (advance.Image != null && advance.Image.Length > 0)
+                                {
+                                    <img src="data:image;base64,@Convert.ToBase64String(advance.Image)" class="card-img-top zoomable-image" alt="Advance Image" />
+                                }
+                            </td>
+                            <td>@advance.ManagerFirstName @advance.ManagerLastName</td>
+                            <td>@advance.Amount</td>
+                            <td>@advance.AdvanceDate.ToShortDateString()</td>
+                            <td>@advance.AdvanceStatus</td>
+                            <td>@advance.Roles</td>
+                            <td>
+                                <a href="@Url.Action("Details", "Advance", new { id = advance.Id })" class="btn btn-info">Details</a>
+                     
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="expenses" class="tab-content" style="display:none;">
+        <div class="table-responsive">
+            <table id="expensesTable" class="table">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Employee:</th>
+                        <th>Description</th>
+                        <th>Amount</th>
+                        <th>Role</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var expense in Model.Expenses)
+                    {
+                        <tr>
+                            <td>
+                                @if (expense.Image != null && expense.Image.Length > 0)
+                                {
+                                    <img src="data:image;base64,@Convert.ToBase64String(expense.Image)" class="card-img-top zoomable-image" alt="Expense Image" />
+                                }
+                            </td>
+                            <td>@expense.ManagerFirstName @expense.ManagerLastName</td>
+                            <td>
+                                <span class="description-tooltip" title="@expense.Description">
+                                    @(expense.Description.Length > 30 ? expense.Description.Substring(0, 30) + "..." : expense.Description)
+                                </span>
+                            </td>
+                            <td>@expense.Amount</td>
+                            <td>@expense.Roles</td>
+                            <td>@expense.ExpenseDate.ToShortDateString()</td>
+                            <td>
+                                <a href="@Url.Action("Details", "Expense", new { id = expense.Id })" class="btn btn-info">Details</a>
+                         
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="leaves" class="tab-content" style="display:none;">
+        <div class="table-responsive">
+            <table id="leavesTable" class="table">
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Leave Type</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var leave in Model.Leaves)
+                    {
+                        <tr>
+                            <td>@leave.ManagerFirstName @leave.ManagerLastName</td>
+                            <td>@leave.LeaveTypeType</td>
+                            <td>@leave.StartDate.ToShortDateString()</td>
+                            <td>@leave.EndDate.ToShortDateString()</td>
+                            <td>@leave.LeaveStatus</td>
+                            <td>
+                                <a href="@Url.Action("Details", "Leave", new { id = leave.Id })" class="btn btn-info">Details</a>
+                              
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<script>
+    function showTab(tabId) {
+        const contents = document.querySelectorAll('.tab-content');
+        contents.forEach(content => content.style.display = 'none');
+        document.getElementById(tabId).style.display = 'block';
+
+        const links = document.querySelectorAll('.tab-link');
+        links.forEach(link => link.classList.remove('active'));
+
+        document.querySelector(`[onclick="showTab('${tabId}')"]`).classList.add('active');
+
+        $('#advancesTable').DataTable().destroy();
+        $('#expensesTable').DataTable().destroy();
+        $('#leavesTable').DataTable().destroy();
+
+        if (tabId === 'advances') {
+            $('#advancesTable').DataTable();
+        } else if (tabId === 'expenses') {
+            $('#expensesTable').DataTable();
+        } else if (tabId === 'leaves') {
+            $('#leavesTable').DataTable();
+        }
+    }
+
+    function getParameterByName(name) {
+        const url = new URL(window.location.href);
+        return url.searchParams.get(name);
+    }
+
+    function goBack() {
+        window.history.back();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        showTab('advances');
+
+        const employeeId = getParameterByName('employeeId');
+        if (employeeId) {
+            console.log('Employee ID:', employeeId);
+        }
+
+        // Tooltip etkinleştir
+        $('.description-tooltip').tooltip();
+
+        // Delete button için sweetalert ekleme
+        $('.btn-delete').click(function () {
+            var id = $(this).data('id');
+            swal({
+                title: "@Localizer["DeleteConfirmation"]",
+                text: "@Localizer["DeleteConfirmationText"]",
+                icon: "warning",
+                buttons: {
+                    cancel: {
+                        text: "@Localizer["No"]",
+                        visible: true,
+                        className: "btn btn-secondary",
+                        closeModal: true
+                    },
+                    confirm: {
+                        text: "@Localizer["Yes"]",
+                        className: "btn btn-danger",
+                        closeModal: false
+                    }
+                }
+            }).then((isConfirm) => {
+                if (isConfirm) {
+                    $.ajax({
+                        url: '@Url.Action("Delete", "Expense", new { area = "Manager" })', // Alan adı varsa ekleyin
+                        type: 'POST',
+                        data: { id: id },
+                        success: function (response) {
+                            swal({
+                                title: "@Localizer["Deleted"]",
+                                text: "@Localizer["DeleteSuccessText"]",
+                                icon: "success"
+                            }).then(() => {
+                                location.reload(); // Sayfayı başarıyla yenile
+                            });
+                        },
+                        error: function () {
+                            swal("@Localizer["Error"]", "@Localizer["DeleteErrorText"]", "error");
+                        }
+                    });
+                } else {
+                    swal.close();
+                }
+            });
+        });
+    });
+</script>
+
+<style>
+    .modal-body {
+        padding: 30px;
+        text-align: center;
+    }
+
+    .modal-content {
+        background-color: #fff;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 500px;
+        border-radius: 8px;
+    }
+
+    .modal-header {
+        background-color: #fff;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .tabs {
+        margin-bottom: 20px;
+        border-bottom: 2px solid #7978E9;
+    }
+
+        .tabs ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: flex-start;
+        }
+
+            .tabs ul li {
+                margin-right: 10px;
+            }
+
+                .tabs ul li a {
+                    text-decoration: none;
+                    padding: 10px 20px;
+                    display: block;
+                    color: #7978E9;
+                    font-weight: bold;
+                    transition: color 0.3s ease;
+                    border: 2px solid transparent;
+                    border-radius: 5px;
+                }
+
+                    .tabs ul li a:hover,
+                    .tabs ul li a.active {
+                        color: white;
+                        background-color: #7978E9;
+                        border-color: #7978E9;
+                    }
+
+    .table-responsive {
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        background-color: white;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .table th,
+        .table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .table thead th {
+            background-color: #7978E9;
+            color: white;
+            border-bottom: 2px solid #7978E9;
+        }
+
+    body {
+        background: #F5F7FF;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .page-title {
+        color: #7978E9;
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 2em;
+    }
+
+    .btn-create {
+        text-decoration: none;
+        color: white;
+        font-weight: bold;
+        background-color: #7978E9;
+        padding: 10px 20px;
+        border-radius: 25px;
+        display: inline-block;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-create:hover {
+            background-color: #5c5ab3;
+        }
+
+    .btn-info {
+        background-color: #7978E9;
+        border-color: #7978E9;
+        color: white;
+    }
+
+        .btn-info:hover {
+            background-color: #7978E9;
+            border-color: #7978E9;
+        }
+</style>

@@ -1,0 +1,647 @@
+﻿
+
+@using Ekip2.Application.Services.PackageServices
+@using Ekip2.Presentation.Areas.Admin.Models.PackageVMs
+@inject IPackageService packageService;
+@inject ICompanyService companyService;
+@{
+    Layout = null;
+    var packageList = await packageService.GetAllAsync();
+    var packages = packageList.Data.Adapt<List<PackageListVM>>();
+    var companies = await companyService.GetAllAsync();
+    var companyList = companies.Data.Adapt<List<CompanyListVM>>();
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <title>HR Management System SEAO</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="~/HomePage-Purple/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+
+    <!-- Additional CSS Files -->
+    <link rel="stylesheet" href="~/HomePage-Purple/assets/css/fontawesome.css">
+    <link rel="stylesheet" href="~/HomePage-Purple/assets/css/templatemo-tale-seo-agency.css">
+    <link rel="stylesheet" href="~/HomePage-Purple/assets/css/owl.css">
+    <link rel="stylesheet" href="~/HomePage-Purple/assets/css/animate.css">
+    <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
+    <!--
+
+    TemplateMo 582 Tale SEO Agency
+
+    https://templatemo.com/tm-582-tale-seo-agency
+
+    -->
+</head>
+
+<body>
+
+    <!-- ***** Preloader Start ***** -->
+    <div id="js-preloader" class="js-preloader">
+        <div class="preloader-inner">
+            <span class="dot"></span>
+            <div class="dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </div>
+    <!-- ***** Preloader End ***** -->
+    <!-- ***** Pre-Header Area Start ***** -->
+    <div class="pre-header" id="top">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-sm-9">
+                    <div class="left-info">
+                        <ul>
+                            <li><a href="mailto:info.hrmanagementsystem@gmail.com"><i class="fa fa-envelope"></i> info.hrmanagementsystem@gmail.com</a></li>
+                            <li><a href="#"><i class="fa fa-map-marker"></i>Kadıköy/İstanbul</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ***** Pre-Header Area End ***** -->
+    <!-- ***** Header Area Start ***** -->
+    <header class="header-area header-sticky">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <nav class="main-nav">
+                        <!-- ***** Logo Start ***** -->
+                        <a class="logo">
+                            <img src="~/HomePage-Purple/assets/images/logo.png" alt="" style="max-width: 112px;">
+                        </a>
+                        <!-- ***** Logo End ***** -->
+                        <!-- ***** Menu Start ***** -->
+                        <ul class="nav">
+                            <li class="scroll-to-section"><a asp-controller="Home" asp-action="Index" class=" btn btn-index">Home</a></li>
+                            <li class="scroll-to-section"><a asp-controller="Account" asp-action="Login" class=" btn btn-index">Login</a></li>
+                            <li class="scroll-to-section"><a asp-controller="Home" asp-action="AboutUs" class=" btn btn-index">About Us</a></li>
+                            <li class="scroll-to-section"><a id="partnershipbutton" class="btn btn-primary">Partnerships</a></li>
+                            <li class="scroll-to-section"><a id="whatweoffer" class="btn btn-primary">What We Offer ?</a></li>
+
+
+                        </ul>
+                        <a class='menu-trigger'>
+                            <span>Menu</span>
+                        </a>
+                        <!-- ***** Menu End ***** -->
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- ***** Header Area End ***** -->
+
+    <div class="main-banner" id="top">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-7">
+                    <div class="caption header-text">
+                        <h6>SEAO HR MANAGEMENT</h6>
+                        <div class="line-dec"></div>
+                        <h4>Dive <em>Into The HR Management</em> World <span>With SEAO</span></h4>
+                        <p>
+                            SEAO is a leading software platform offering the best solutions in human resource management.
+                            With its user-friendly interface and powerful features, it simplifies your business processes.
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="services section" id="services">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 offset-lg-6">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="section-heading">
+                                <h2>
+                                    We Offer <em>Comprehensive HR Services</em> &amp;
+                                    <span>Solutions</span> For Your Organization
+                                </h2>
+                                <div class="line-dec"></div>
+                                <p>Our HR services are designed to help your organization thrive. From recruitment to employee development, we've got you covered.</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-sm-6">
+                            <div class="service-item">
+                                <div class="icon">
+                                    <img src="~/HomePage-Purple/assets/images/services-01.jpg" alt="recruitment" class="templatemo-feature">
+                                </div>
+                                <h4>Recruitment &amp; Staffing Solutions</h4>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-sm-6">
+                            <div class="service-item">
+                                <div class="icon">
+                                    <img src="~/HomePage-Purple/assets/images/services-02.jpg" alt="employee development" class="templatemo-feature">
+                                </div>
+                                <h4>Employee Development &amp; Training</h4>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-sm-6">
+                            <div class="service-item">
+                                <div class="icon">
+                                    <img src="~/HomePage-Purple/assets/images/services-03.jpg" alt="benefits administration" class="templatemo-feature">
+                                </div>
+                                <h4>Benefits Administration &amp; Compliance</h4>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-sm-6">
+                            <div class="service-item">
+                                <div class="icon">
+                                    <img src="~/HomePage-Purple/assets/images/services-04.jpg" alt="hr consulting" class="templatemo-feature">
+                                </div>
+                                <h4>HR Consulting &amp; Advisory Services</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="projects section" id="projects">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="section-heading">
+                        <h2>Discover Our <em>Our Valued Partnerships</em></h2>
+                        <div class="line-dec"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="owl-carousel owl-theme">
+                        @foreach (var company in companyList)
+                        {
+                            <div class="item">
+                                <div class="card">
+                                    <img src="@($"data:image/png;base64,{Convert.ToBase64String(company.Image)}")" alt="@company.Name" class="card-img-top">
+                                    <div class="card-body">
+                                        <h4 class="card-title">@company.Name</h4>
+
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <button class="btn btn-primary owl-prev"><i class="fa fa-chevron-left"></i></button>
+                    <button class="btn btn-primary owl-next"><i class="fa fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Pricing Section -->
+    <div class="pricing section" id="pricing">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="main-content">
+                        <div class="row">
+                            @foreach (var item in packages)
+                            {
+
+                                <div class="col-lg-4">
+                                    <div class="pricing-card">
+                                        <div class="card-header">
+                                            <h4>@item.Name</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="price">$ @item.Price/month</p>
+                                            <ul>
+                                                <li>@item.EmployeeCount</li>
+                                                <p>@item.Description</p>
+                                            </ul>
+                                            <a id="packageButton" class="btn btn-package">Get Started</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Form Section -->
+    <div class="contact-us section" id="form-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="contact-us-content">
+                        <div class="row">
+                            <div class="col-lg-4">
+                               @*  <div id="map"> *@
+                                    <div>
+                                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3011.676634636451!2d29.020441511683938!3d40.988561120519215!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cab98565932cb9%3A0xafaaa9dbc4bf05ab!2sBilgeAdam%20Akademi%20Kad%C4%B1k%C3%B6y!5e0!3m2!1sen!2str!4v1722416677680!5m2!1sen!2str" width="100%" height="670px" frameborder="0" style="border:0; border-radius: 23px;"
+                                            allowfullscreen="">
+                                       @*  width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" *@>
+                                    </iframe>
+
+
+                                 @*    <iframe src="https://www.google.com/maps/embed?pb=!1m23!1m12!1m3!1d116727.32125680291!2d28.957085342119473!3d41.04532720321269!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m8!3e6!4m0!4m5!1s0x14cab55c342e6e5f%3A0x8a49830df17cd6a7!2zQmlsZ2VBZGFtIFRla25vbG9qaSBHZW5lbCBNw7xkw7xybMO8aywgQjMgxLDDpyBLYXDEsSwgUmXFn2l0cGHFn2EgTWFoLiBLYXRhciBDYWQuIFRla25va2VudCBBUkkgMyBObzogNCwgTm86IEIzMDEsIDM0NDY3IFNhcsSxeWVyL8Swc3RhbmJ1bA!3m2!1d41.10769!2d29.0323116!5e1!3m2!1str!2str!4v1722100750070!5m2!1str!2str"
+                                            width="100%" height="670px" frameborder="0" style="border:0; border-radius: 23px;"
+                                            allowfullscreen="">
+                                    </iframe> *@
+
+                                </div>
+                            </div>
+                            <div class="col-lg-8">
+                                <form id="contact-form" action="" method="post">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="section-heading">
+                                                <h2><em>Contact Us</em> &amp; Get In <span>Touch</span></h2>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <fieldset>
+                                                <input type="name" name="name" id="name" placeholder="Your Name..." autocomplete="on" required>
+                                            </fieldset>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <fieldset>
+                                                <input type="surname" name="surname" id="surname" placeholder="Your Surname..." autocomplete="on" required>
+                                            </fieldset>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <fieldset>
+                                                <input type="text" name="email" id="email" placeholder="Your E-mail..." required>
+                                            </fieldset>
+                                        </div>
+
+                                        <div class="col-lg-6">
+                                            <fieldset>
+                                                <input type="subject" name="subject" id="subject" placeholder="Subject..." autocomplete="on">
+                                            </fieldset>
+                                        </div>
+
+                                        <div class="col-lg-6">
+                                            <select class="contact-form" name="package" id="package">
+                                                <option value="">Select Package</option>
+                                                @foreach (var package in packages)
+                                                {
+                                                    <option value="@package">@package.Name</option>
+                                                }
+                                            </select>
+                                        </div>
+
+                                        <div class="col-lg-12">
+                                            <fieldset>
+                                                <textarea name="message" id="message" placeholder="Your Message" style="resize : none"></textarea>
+                                            </fieldset>
+                                        </div>
+
+
+                                        <div class="col-lg-12">
+                                            <fieldset>
+                                                <button asp-controller="Home" asp-action="SendRequest" type="submit" id="form-submit" class="orange-button">Send Message Now</button>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div class="more-info">
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <div class="info-item">
+                                                <i class="fa fa-envelope"></i>
+                                                <h4><a href="#">info.hrmanagementsystem@gmail.com</a></h4>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="info-item"></div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="info-item">
+                                                <i class="fa fa-map-marker"></i>
+                                                <h4><a href="#">Kadıköy/İstanbul</a></h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cta section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <h4>Are You Ready To Work &amp; Develop With Us ?<br>Don't Hesitate &amp; Contact Us !</h4>
+                </div>
+                <div class="col-lg-4">
+                    <div class="main-button">
+                        <a href="#">Contact Us Now!</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="col-lg-12">
+                <p>
+                    Copyright © 2024 <a href="#">SAEO HR Management</a>. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <!-- Bootstrap core JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/HomePage-Purple/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/HomePage-Purple/assets/js/isotope.min.js"></script>
+    <script src="~/HomePage-Purple/assets/js/owl-carousel.js"></script>
+    <script src="~/HomePage-Purple/assets/js/tabs.js"></script>
+    <script src="~/HomePage-Purple/assets/js/popup.js"></script>
+    <script src="~/HomePage-Purple/assets/js/custom.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.btn.btn-package').click(function (event) {
+                event.preventDefault(); // Butonun varsayılan işlevini engelle
+
+                // Butondan data-package değerini al
+                var packageValue = $(this).data('package');
+
+                // Textbox alanını bu değer ile doldur
+                $('#package').val(packageValue);
+
+                //contact formuna kaydırır
+                $(document).ready(function () {
+                    // Butona tıklama olayını dinle
+                    $('#packageButton').on('click', function () {
+                        // Sayfanın belirli bir bölümüne kaydır
+                        $('html, body').animate({
+                            scrollTop: $('#form-section').offset().top
+                        }, 100);
+                    });
+                });
+            });
+            $('.btn.btn-primary').click(function (event) {
+                //partnership formuna kaydırır
+                $(document).ready(function () {
+                    // Butona tıklama olayını dinle
+                    $('#partnershipbutton').on('click', function () {
+                        // Sayfanın belirli bir bölümüne kaydır
+                        $('html, body').animate({
+                            scrollTop: $('#projects').offset().top
+                        }, 100);
+                    });
+                });
+            });
+            //whatweoffer formuna kaydırır
+            $(document).ready(function () {
+                // Butona tıklama olayını dinle
+                $('#whatweoffer').on('click', function () {
+                    // Sayfanın belirli bir bölümüne kaydır
+                    $('html, body').animate({
+                        scrollTop: $('#services').offset().top
+                    }, 100); // sürede kaydırma
+                });
+            });
+
+        });
+
+        $(document).ready(function () {
+            var owl = $('.owl-carousel');
+            owl.owlCarousel({
+                loop: true,
+                margin: 10,
+                nav: false,
+                responsive: {
+                    0: {
+                        items: 1
+                    },
+                    600: {
+                        items: 3
+                    },
+                    1000: {
+                        items: 5
+                    }
+                }
+            });
+
+            // Custom Navigation Events
+            $('.owl-next').click(function () {
+                owl.trigger('next.owl.carousel');
+            });
+            $('.owl-prev').click(function () {
+                owl.trigger('prev.owl.carousel');
+            });
+        });
+
+    </script>
+</body>
+<style>
+    /* Pricing Section */
+
+    p {
+        color: #292929;
+    }
+
+    .pricing {
+        background-color: #f9f9f9;
+        padding: 60px 0;
+    }
+
+        .pricing .main-content {
+            text-align: center;
+        }
+
+    .pricing-card {
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        margin-bottom: 30px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+    .card-header {
+        background-color: #c63dff;
+        color: #ffffff;
+        padding: 20px;
+        text-align: center;
+    }
+
+        .card-header h4 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+    .card-body {
+        padding: 30px;
+        text-align: center;
+    }
+
+    .price {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #292929;
+        margin-bottom: 20px;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        margin-bottom: 30px;
+    }
+
+        ul li {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+    .btn-primary {
+        background-color: transparent;
+        border: none;
+        border-radius: 5px;
+        color: #fff;
+        padding: 12px 20px;
+        font-size: 16px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-primary:hover {
+            background-color: transparent;
+        }
+
+    .btn-index {
+        background-color: transparent;
+        border: none;
+        border-radius: 5px;
+        color: #fff;
+        padding: 12px 20px;
+        font-size: 16px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-index:hover {
+            background-color: transparent;
+        }
+
+    .btn-package {
+        background-color: #c63dff;
+        border: none;
+        border-radius: 5px;
+        color: #fff;
+        padding: 12px 20px;
+        font-size: 16px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-package:hover {
+            background-color: #c63dff;
+        }
+
+    .owl-carousel .item {
+        padding: 15px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .card {
+        width: 100%;
+        height: 100%;
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-img-top {
+        width: 100%;
+        height: 250px; /* Fixed height for the images */
+        object-fit: cover; /* Ensures the image covers the container */
+    }
+
+    .card-body {
+        padding: 15px;
+        text-align: center;
+    }
+
+    .card-title {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+    }
+
+    .card-link {
+        font-size: 1.5rem;
+        color: #333;
+    }
+
+
+    
+
+    .contact-form {
+        width: 100%;
+        height: 46px;
+        border-radius: 23px;
+        background-color: #f9ebff;
+        border: none;
+        outline: none;
+        padding: 0px 15px;
+        font-size: 14px;
+        color: #2a2a2a;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+        /* Option styles */
+        .contact-form option {
+            background-color: #f9ebff; 
+            color: #2a2a2a; 
+            font-weight: 600; 
+            padding: 10px; 
+        }
+
+           
+            .contact-form option:hover,
+            .contact-form option:focus {
+                background-color: #e0c7f2; 
+                color: #2a2a2a; 
+            }
+</style>
+</html>

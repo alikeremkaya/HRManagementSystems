@@ -1,0 +1,156 @@
+﻿@model Ekip2.Presentation.Areas.Manager.Models.LeaveVMs.LeaveUpdateVM
+
+@{
+    ViewData["Title"] = "Update";
+}
+
+<h1 class="custom-page-title">@Localizer["UpdateLeave"]</h1>
+
+<form id="leaveUpdateForm" asp-action="Update" method="post" class="form-custom">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="StartDate" class="control-label">@Localizer["StartDate"]</label>
+        <input asp-for="StartDate" class="form-control" required />
+        <span asp-validation-for="StartDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="EndDate" class="control-label">@Localizer["EndDate"]</label>
+        <input asp-for="EndDate" class="form-control" required />
+        <span asp-validation-for="EndDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group row">
+        <label asp-for="LeaveTypeId" class="col-sm-3 col-form-label">@Localizer["LeaveType"]</label>
+        <div class="col-sm-9">
+            <select asp-for="LeaveTypeId" asp-items="@Model.LeaveTypes" class="form-control" required>
+                <option value="">--- @Localizer["Select"] ---</option>
+            </select>
+            <span asp-validation-for="LeaveTypeId" class="text-danger"></span>
+        </div>
+    </div>
+
+    <input asp-for="ManagerId" type="hidden" />
+    <input asp-for="ManagerFirstName" type="hidden" />
+    <input asp-for="ManagerLastName" type="hidden" />
+
+    <div class="form-group">
+        <input type="submit" value="@Localizer["Save"]" class="btn btn-primary" />
+    </div>
+</form>
+
+<div class="container mt-3 text-center">
+    <a asp-action="Index" class="btn btn-secondary">@Localizer["BackToList"]</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+   
+}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation/1.19.3/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.11/jquery.validate.unobtrusive.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#leaveUpdateForm').on('submit', function (event) {
+            var startDate = new Date($('#StartDate').val());
+            var endDate = new Date($('#EndDate').val());
+
+            if (endDate <= startDate) {
+                var endDateInput = document.getElementById('EndDate');
+                endDateInput.setCustomValidity('End date must be greater than start date.');
+                endDateInput.reportValidity();
+                event.preventDefault(); // prevent form submission
+            } else {
+                // Clear the custom error if dates are valid
+                document.getElementById('EndDate').setCustomValidity('');
+            }
+        });
+
+        // Clear custom validity when the date inputs are changed
+        $('#StartDate, #EndDate').on('change', function () {
+            var endDateInput = document.getElementById('EndDate');
+            endDateInput.setCustomValidity('');
+        });
+    });
+</script>
+
+<style>
+    body {
+        background: #eee;
+    }
+
+    .custom-page-title {
+        color: #4b49ac;
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 2em;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .form-custom {
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .control-label {
+        font-weight: bold;
+        color: #4b49ac;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 8px;
+        font-size: 1em;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .btn {
+        text-decoration: none;
+        font-weight: bold;
+        padding: 10px 20px;
+        border-radius: 25px;
+        display: inline-block;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-primary {
+        background-color: #4b49ac;
+        border: 1px solid #4b49ac;
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background-color: #4b49ac;
+            border: 1px solid #4b49ac;
+        }
+
+    .btn-secondary {
+        background-color: #6C757D;
+        border: 1px solid #6C757D;
+        color: white;
+    }
+
+        .btn-secondary:hover {
+            background-color: #5A6369;
+            border: 1px solid #5A6369;
+        }
+
+    .text-danger {
+        font-size: 0.875em;
+    }
+</style>

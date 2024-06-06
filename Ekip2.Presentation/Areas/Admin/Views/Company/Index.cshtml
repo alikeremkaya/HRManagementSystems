@@ -1,0 +1,332 @@
+﻿@model IEnumerable<Ekip2.Presentation.Areas.Admin.Models.CompanyVMs.CompanyListVM>
+
+@{
+    ViewData["Title"] = "Companies";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="page-title">@Localizer["Companies"]</h1>
+        <button id="createCompany" class="btn btn-create" data-toggle="modal" data-target="#createCompanyModal">@Localizer["Add"]</button>
+    </div>
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-3 d-flex mb-4">
+                <div class="card h-100 card-animated">
+                    <div class="card-body">
+                        <h4 class="card-title"><center>@item.Name</center></h4>
+                        <div class="image-container">
+                            @if (item.Image is null)
+                            {
+                                <p class="image-placeholder">@Localizer["NoImagePleaseAdd"]</p>
+                            }
+                            else
+                            {
+                                <img class="image-preview" src="@($"data:image/png;base64,{Convert.ToBase64String(item.Image)}")" onclick="openModal(this.src)" />
+                            }
+                        </div>
+                        <p class="card-text"><center>Package : @item.PackageName</center></p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-actions">
+                            <button class="btn btn-update" data-toggle="modal" data-target="#updateCompanyModal" data-id="@item.Id">@Localizer["Update"]</button>
+                            <button class="btn btn-delete" data-id="@item.Id">@Localizer["Delete"]</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Create Modal -->
+<div class="modal fade" id="createCompanyModal" tabindex="-1" role="dialog" aria-labelledby="createCompanyModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createCompanyModalLabel">@Localizer["CreateNewCompany"]</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="createModalContent"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Update Modal -->
+<div class="modal fade" id="updateCompanyModal" tabindex="-1" role="dialog" aria-labelledby="updateCompanyModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateCompanyModalLabel">@Localizer["UpdateCompany"]</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="updateModalContent"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function () {
+            $('#createCompanyModal').on('show.bs.modal', function () {
+                var url = '@Url.Action("Create", "Company")';
+                $('#createModalContent').load(url);
+            });
+
+            $('#updateCompanyModal').on('show.bs.modal', function (e) {
+                var button = $(e.relatedTarget);
+                var id = button.data('id');
+                var url = '@Url.Action("Update", "Company")/' + id;
+                $('#updateModalContent').load(url);
+            });
+
+            $('.btn-delete').click(function () {
+                var id = $(this).data('id');
+                swal({
+                    title: "@Localizer["DeleteConfirmation"]",
+                    text: "@Localizer["DeleteConfirmationText"]",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: "@Localizer["No"]",
+                            value: null,
+                            visible: true,
+                            className: "swal-btn swal-btn-cancel",
+                            closeModal: true
+                        },
+                        confirm: {
+                            text: "@Localizer["Yes"]",
+                            value: true,
+                            visible: true,
+                            className: "swal-btn swal-btn-confirm",
+                            closeModal: false
+                        }
+                    },
+                    buttonStyling: false
+                }).then((isConfirm) => {
+                    if (isConfirm) {
+                        $.ajax({
+                            url: '@Url.Action("Delete", "Company", new { area = "Admin" })',
+                            type: 'POST',
+                            data: { id: id },
+                            success: function (response) {
+                                swal({
+                                    title: "@Localizer["Deleted"]",
+                                    text: "@Localizer["DeleteSuccessText"]",
+                                    icon: "success"
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            },
+                            error: function () {
+                                swal("@Localizer["Error"]", "@Localizer["DeleteErrorText"]", "error");
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}
+
+<style>
+    body {
+        background: #F5F7FF;
+    }
+
+    .container {
+        margin-top: 50px;
+        max-width: 100%;
+    }
+
+    .page-title {
+        color: #7978E9;
+        margin-bottom: 30px;
+        font-size: 2em;
+    }
+
+    .card-custom {
+        margin: 15px;
+    }
+
+        .card-custom:hover::after {
+            transform: scaleY(1);
+        }
+
+    .card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 20px;
+        height: 100%;
+    }
+
+    .card-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .card-footer {
+        margin-top: auto;
+    }
+
+    .card-actions {
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .btn {
+        text-decoration: none;
+        color: white;
+        padding: 8px 15px;
+        border-radius: 5px;
+        font-size: 0.8em;
+        width: 45%;
+        text-align: center;
+    }
+
+    .btn-update,
+    .btn-delete {
+        text-decoration: none;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        display: inline-block;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-update {
+        background-color: #7978E9;
+        border: 1px solid #7978E9;
+        color: white;
+    }
+
+    .btn-delete {
+        background-color: #dc3545;
+        border: 1px solid #dc3545;
+        color: white;
+    }
+
+        .btn-update:hover,
+        .btn-delete:hover {
+            background-color: #7978E9;
+        }
+
+    .custom-btn {
+        text-decoration: none;
+        color: white;
+        font-weight: bold;
+        padding: 10px 20px;
+        border-radius: 25px;
+        display: inline-block;
+        transition: background-color 0.3s ease;
+    }
+
+    .custom-btn-create {
+        background-color: #7978E9;
+    }
+
+    .createCompany {
+        text-decoration: none;
+        color: white;
+        font-weight: bold;
+        background-color: #7978E9;
+        padding: 10px 20px;
+        border-radius: 25px;
+        display: inline-block;
+        transition: background-color 0.3s ease;
+    }
+
+    .modal-content {
+        border-radius: 10px;
+    }
+
+    .modal-header {
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        background-color: #7978E9;
+        color: white;
+        border-bottom: none;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .modal-footer {
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+        background-color: #f8f9fa;
+    }
+
+    .btn-create {
+        text-decoration: none;
+        color: white;
+        font-weight: bold;
+        background-color: #7978E9;
+        padding: 8px 15px;
+        border-radius: 15px;
+        display: inline-block;
+        transition: background-color 0.2s ease;
+        font-size: 0.9em;
+        width: 130px;
+        text-align: center;
+    }
+
+    .image-container {
+        height: 200px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        background-color: #f9f9f9;
+    }
+
+    .image-preview {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: cover;
+    }
+
+    .swal-btn {
+        padding: 8px 16px;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .swal-btn-confirm {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .swal-btn-cancel {
+        background-color: #dc3545;
+        color: white;
+    }
+</style>

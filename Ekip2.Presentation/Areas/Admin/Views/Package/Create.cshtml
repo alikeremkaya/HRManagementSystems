@@ -1,0 +1,143 @@
+﻿@model Ekip2.Presentation.Areas.Admin.Models.PackageVMs.PackageCreateVM
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <form asp-action="Create" class="custom-form">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="custom-form-group">
+                    <label asp-for="Name" class="control-label">@Localizer["Name"]</label>
+                    <input asp-for="Name" class="form-control" required />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="custom-form-group">
+                    <label asp-for="Description" class="control-label">@Localizer["Description"]</label>
+                    <textarea asp-for="Description" class="form-control" required></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+                <div class="custom-form-group">
+                    <label asp-for="EmployeeCount" class="control-label">@Localizer["EmployeeCount"]</label>
+                    <input asp-for="EmployeeCount" class="form-control" required />
+                    <span asp-validation-for="EmployeeCount" class="text-danger"></span>
+                </div>
+                <div class="custom-form-group">
+                    <label asp-for="Price" class="control-label">@Localizer["Price"]</label>
+                    <input asp-for="Price" class="form-control" type="number" step="0.01" required />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+
+                <div class="custom-form-group text-center">
+                    <input type="submit" value="@Localizer["Create"]" class="custom-btn custom-btn-create" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="text-center mt-3">
+    <a asp-action="Index" class="custom-btn custom-btn-update">@Localizer["BackToList"]</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+<style>
+    body {
+        background: #eee;
+    }
+
+    .custom-page-title {
+        color: #7978E9;
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 2em;
+    }
+
+    .custom-card {
+        border: none;
+        position: relative;
+        overflow: hidden;
+        border-radius: 8px;
+        background-color: white;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        cursor: pointer;
+    }
+
+        .custom-card:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background-color: #E1BEE7;
+            transform: scaleY(1);
+            transition: all 0.5s;
+            transform-origin: bottom;
+        }
+
+        .custom-card:after {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background-color: #7978E9;
+            transform: scaleY(0);
+            transition: all 0.5s;
+            transform-origin: bottom;
+        }
+
+        .custom-card:hover::after {
+            transform: scaleY(1);
+        }
+
+    .custom-form {
+        background-color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 20px;
+    }
+
+    .custom-form-group {
+        margin-bottom: 15px;
+    }
+
+    .custom-btn {
+        text-decoration: none;
+        color: white;
+        font-weight: bold;
+        padding: 10px 20px;
+        border-radius: 25px;
+        display: inline-block;
+        transition: background-color 0.3s ease;
+    }
+
+    .custom-btn-create {
+        background-color: #7978E9;
+    }
+
+        .custom-btn-create:hover {
+            background-color: #7978E9;
+        }
+
+    .custom-btn-update {
+        background-color: #7978E9;
+    }
+
+        .custom-btn-update:hover {
+            background-color: #7978E9;
+        }
+
+</style>
